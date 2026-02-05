@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Jasper Design Tokens */
+  --jasper-cream: #FAEE8D;
+  --jasper-cream-light: #FDF8D4;
+  --jasper-coral: #FF5C35;
+  --jasper-coral-dark: #E5472A;
+  --jasper-navy: #1A1A38;
+  --jasper-navy-light: #2D2D4A;
+  --jasper-white: #FFFFFF;
+  --jasper-gray: #6B6B7B;
+  --jasper-gray-light: #9D9DAB;
+
+  --background: var(--jasper-white);
+  --foreground: var(--jasper-navy);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Custom scrollbar - Jasper style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 56, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 92, 53, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--jasper-coral-dark);
+}
+
+/* Jasper Button Styles */
+.btn-jasper-primary {
+  @apply px-6 py-3 bg-jasper-coral text-white font-semibold rounded-lg transition-all duration-200;
+}
+
+.btn-jasper-primary:hover {
+  @apply bg-jasper-coral-dark -translate-y-0.5;
+}
+
+.btn-jasper-primary:disabled {
+  @apply opacity-50 cursor-not-allowed translate-y-0;
+}
+
+.btn-jasper-secondary {
+  @apply px-5 py-2.5 bg-transparent border border-jasper-navy/20 text-jasper-navy font-medium rounded-lg transition-all duration-200;
+}
+
+.btn-jasper-secondary:hover {
+  @apply border-jasper-coral text-jasper-coral;
+}
+
+/* Jasper Input Styles */
+.jasper-input {
+  @apply w-full px-5 py-4 border border-jasper-navy/15 rounded-xl transition-all duration-200;
+  @apply focus:outline-none focus:border-jasper-coral focus:ring-2 focus:ring-jasper-coral/10;
+}
+
+/* Jasper Card Styles */
+.jasper-card {
+  @apply bg-jasper-white rounded-2xl p-6;
+  border: 1px solid rgba(26, 26, 56, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(26, 26, 56, 0.05);
+}
+
+/* Drop zone styles - Jasper style */
+.drop-zone {
+  @apply border-2 border-dashed rounded-xl p-8 transition-all duration-200;
+  border-color: rgba(26, 26, 56, 0.2);
+  background-color: rgba(253, 248, 212, 0.3);
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+  @apply border-jasper-coral;
+  background-color: rgba(250, 238, 141, 0.3);
+}
+
+/* Card hover effects - Jasper style */
+.type-card {
+  @apply transition-all duration-300 ease-out;
+}
+
+.type-card:hover {
+  @apply -translate-y-1;
+  box-shadow: 0 10px 25px -5px rgba(26, 26, 56, 0.1);
+}
+
+/* Fade-in animation */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 92, 53, 0.1) 25%,
+    rgba(255, 92, 53, 0.2) 50%,
+    rgba(255, 92, 53, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
