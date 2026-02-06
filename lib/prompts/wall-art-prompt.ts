@@ -28,9 +28,9 @@ export const WALL_ART_SCENE = {
       "Architecture-aware linear projection to preserve wall art geometry",
   },
   lighting: {
-    primary: "Left 45-degree natural window light",
-    shadows: "Soft contact shadows from wall art onto the plaster wall",
-    temperature: "5500K neutral daylight",
+    primary: "Left 45-degree soft diffused natural window light, 10am morning sun",
+    shadows: "Low contrast soft contact shadows from wall art onto the plaster wall",
+    temperature: "5500K warm neutral daylight",
   },
 } as const;
 

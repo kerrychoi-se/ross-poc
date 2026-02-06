@@ -5,30 +5,30 @@ import { Download, RefreshCw, ArrowLeftRight } from "lucide-react";
 
 interface ResultDisplayProps {
   imageUrl: string;
+  threeQuarterImage: string;
   originalImage: string;
   onReset: () => void;
 }
 
-export function ResultDisplay({ imageUrl, originalImage, onReset }: ResultDisplayProps) {
+export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset }: ResultDisplayProps) {
   const [showComparison, setShowComparison] = useState(false);
 
-  const handleDownload = async () => {
+  const handleDownload = async (dataUrl: string, filename: string) => {
     try {
-      // Convert base64 to blob if needed
       let blob: Blob;
-      
-      if (imageUrl.startsWith("data:")) {
-        const response = await fetch(imageUrl);
+
+      if (dataUrl.startsWith("data:")) {
+        const response = await fetch(dataUrl);
         blob = await response.blob();
       } else {
-        const response = await fetch(imageUrl);
+        const response = await fetch(dataUrl);
         blob = await response.blob();
       }
 
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `processed-image-${Date.now()}.png`;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -36,6 +36,13 @@ export function ResultDisplay({ imageUrl, originalImage, onReset }: ResultDispla
     } catch (error) {
       console.error("Download error:", error);
     }
+  };
+
+  const handleDownloadAll = async () => {
+    await handleDownload(imageUrl, `head-on-view-${Date.now()}.png`);
+    // Small delay between downloads to avoid browser blocking
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await handleDownload(threeQuarterImage, `three-quarter-view-${Date.now()}.png`);
   };
 
   return (
@@ -49,9 +56,9 @@ export function ResultDisplay({ imageUrl, originalImage, onReset }: ResultDispla
         </p>
       </div>
 
-      {/* Image Display */}
-      <div className="bg-jasper-cream-light rounded-xl p-4">
-        {showComparison ? (
+      {/* Comparison View */}
+      {showComparison && (
+        <div className="bg-jasper-cream-light rounded-xl p-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <p className="text-sm font-medium text-jasper-gray text-center">
@@ -67,26 +74,64 @@ export function ResultDisplay({ imageUrl, originalImage, onReset }: ResultDispla
             </div>
             <div className="space-y-2">
               <p className="text-sm font-medium text-jasper-gray text-center">
-                Processed
+                Head-On View
               </p>
               <div className="bg-jasper-white rounded-lg p-2">
                 <img
                   src={imageUrl}
-                  alt="Processed"
+                  alt="Head-on view"
                   className="max-h-[300px] w-full object-contain rounded"
                 />
               </div>
             </div>
           </div>
-        ) : (
-          <div className="flex items-center justify-center">
-            <img
-              src={imageUrl}
-              alt="Processed result"
-              className="max-h-[500px] max-w-full object-contain rounded-lg"
-            />
-          </div>
-        )}
+        </div>
+      )}
+
+      {/* Head-On View */}
+      <div className="bg-jasper-cream-light rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-medium text-jasper-navy">
+            Head-On View
+          </p>
+          <button
+            onClick={() => handleDownload(imageUrl, `head-on-view-${Date.now()}.png`)}
+            className="text-jasper-gray hover:text-jasper-coral transition-colors flex items-center gap-1 text-sm"
+          >
+            <Download className="w-4 h-4" />
+            Download
+          </button>
+        </div>
+        <div className="flex items-center justify-center">
+          <img
+            src={imageUrl}
+            alt="Head-on view result"
+            className="max-h-[400px] max-w-full object-contain rounded-lg"
+          />
+        </div>
+      </div>
+
+      {/* 3/4 Angle View */}
+      <div className="bg-jasper-cream-light rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-medium text-jasper-navy">
+            3/4 Angle View
+          </p>
+          <button
+            onClick={() => handleDownload(threeQuarterImage, `three-quarter-view-${Date.now()}.png`)}
+            className="text-jasper-gray hover:text-jasper-coral transition-colors flex items-center gap-1 text-sm"
+          >
+            <Download className="w-4 h-4" />
+            Download
+          </button>
+        </div>
+        <div className="flex items-center justify-center">
+          <img
+            src={threeQuarterImage}
+            alt="3/4 angle view result"
+            className="max-h-[400px] max-w-full object-contain rounded-lg"
+          />
+        </div>
       </div>
 
       {/* Action Buttons */}
@@ -100,11 +145,11 @@ export function ResultDisplay({ imageUrl, originalImage, onReset }: ResultDispla
         </button>
 
         <button
-          onClick={handleDownload}
+          onClick={handleDownloadAll}
           className="btn-jasper-primary flex items-center gap-2"
         >
           <Download className="w-5 h-5" />
-          Download
+          Download All
         </button>
 
         <button

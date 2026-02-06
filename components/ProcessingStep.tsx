@@ -1,9 +1,9 @@
 "use client";
 
-import { Eraser, Wand2, CheckCircle2, Loader2 } from "lucide-react";
+import { Eraser, Wand2, Camera, CheckCircle2, Loader2 } from "lucide-react";
 
 interface ProcessingStepProps {
-  currentStep: "removing-background" | "generating-view";
+  currentStep: "removing-background" | "generating-view" | "generating-three-quarter";
   progress: number;
 }
 
@@ -19,6 +19,12 @@ const steps = [
     label: "Generating Head-On View",
     description: "Using Gemini AI to create a head-on perspective",
     icon: Wand2,
+  },
+  {
+    id: "generating-three-quarter",
+    label: "Generating 3/4 Angle View",
+    description: "Using Gemini AI to create a 3/4 perspective",
+    icon: Camera,
   },
 ];
 

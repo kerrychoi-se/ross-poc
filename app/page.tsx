@@ -5,14 +5,14 @@ import { TypeSelector } from "@/components/TypeSelector";
 import { ImageUploader } from "@/components/ImageUploader";
 import { ProcessingStep } from "@/components/ProcessingStep";
 import { ResultDisplay } from "@/components/ResultDisplay";
-import { removeBackground, generateHeadOnView } from "@/lib/api-client";
+import { removeBackground, generateHeadOnView, generateThreeQuarterView } from "@/lib/api-client";
 import { ArrowLeft } from "lucide-react";
 
 type ProductType = "wall-art" | "shelf" | null;
 type AppState = "select-type" | "upload" | "processing" | "result";
 
 interface ProcessingStatus {
-  step: "removing-background" | "generating-view";
+  step: "removing-background" | "generating-view" | "generating-three-quarter";
   progress: number;
 }
 
@@ -22,6 +22,7 @@ export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [processingStatus, setProcessingStatus] = useState<ProcessingStatus | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [threeQuarterImage, setThreeQuarterImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleTypeSelect = (type: ProductType) => {
@@ -45,7 +46,13 @@ export default function Home() {
       const generatedImage = await generateHeadOnView(transparentImage, productType!);
       setProcessingStatus({ step: "generating-view", progress: 100 });
 
+      // Step 3: Generate 3/4 angle view from the head-on image
+      setProcessingStatus({ step: "generating-three-quarter", progress: 0 });
+      const threeQuarterImg = await generateThreeQuarterView(generatedImage, productType!);
+      setProcessingStatus({ step: "generating-three-quarter", progress: 100 });
+
       setResultImage(generatedImage);
+      setThreeQuarterImage(threeQuarterImg);
       setAppState("result");
     } catch (err) {
       console.error("Processing error:", err);
@@ -61,6 +68,7 @@ export default function Home() {
     setAppState("select-type");
     setUploadedImage(null);
     setResultImage(null);
+    setThreeQuarterImage(null);
     setError(null);
     setProcessingStatus(null);
   };
@@ -72,6 +80,7 @@ export default function Home() {
     } else if (appState === "result") {
       setAppState("upload");
       setResultImage(null);
+      setThreeQuarterImage(null);
     }
   };
 
@@ -134,9 +143,10 @@ export default function Home() {
             />
           )}
 
-          {appState === "result" && resultImage && (
+          {appState === "result" && resultImage && threeQuarterImage && (
             <ResultDisplay
               imageUrl={resultImage}
+              threeQuarterImage={threeQuarterImage}
               originalImage={uploadedImage!}
               onReset={handleReset}
             />

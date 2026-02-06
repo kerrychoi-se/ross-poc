@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { buildWallArtPrompt } from "@/lib/prompts/wall-art-prompt";
-import { buildShelfPrompt } from "@/lib/prompts/shelf-prompt";
+import { buildThreeQuarterPrompt } from "@/lib/prompts/three-quarter-prompt";
 import { getReferenceImagePartsForProductType } from "@/lib/references";
 
 type ProductType = "wall-art" | "shelf";
-
-/**
- * Build the appropriate prompt based on product type
- */
-function buildPrompt(productType: ProductType): string {
-  switch (productType) {
-    case "wall-art":
-      return buildWallArtPrompt();
-    case "shelf":
-      return buildShelfPrompt();
-    default:
-      throw new Error(`Unknown product type: ${productType}`);
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -68,23 +53,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Build the prompt for this product type
-    const prompt = buildPrompt(productType);
+    // Build the 3/4 angle prompt for this product type
+    const prompt = buildThreeQuarterPrompt(productType as ProductType);
 
-    // Load reference images for this product type
+    // Load reference images for aesthetic guidance
     const referenceImageParts = await getReferenceImagePartsForProductType(
       productType
     );
 
     // Build the content parts array
-    // Order: prompt text, product image (Asset_1), reference images
+    // Order: prompt text, head-on reference image, aesthetic reference images
     const contentParts: Array<
       | { text: string }
       | { inline_data: { mime_type: string; data: string } }
     > = [
-      // Primary instruction prompt
+      // Primary 3/4 angle prompt
       { text: prompt },
-      // Asset_1: The product image (immutable anchor)
+      // The head-on generated image as the subject reference
       {
         inline_data: {
           mime_type: mimeType,
@@ -93,16 +78,15 @@ export async function POST(request: NextRequest) {
       },
     ];
 
-    // Add reference images if available (slot_6 aesthetic/prop references)
+    // Add aesthetic reference images if available
     if (referenceImageParts.length > 0) {
-      // Add a text marker for reference images
       contentParts.push({
         text: "\n\nREFERENCE IMAGES (for aesthetic and material guidance only - do not copy directly):",
       });
       contentParts.push(...referenceImageParts);
     }
 
-    // Call Gemini API
+    // Call Gemini API with imageConfig for aspect ratio and resolution control
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const payload = {
@@ -121,7 +105,7 @@ export async function POST(request: NextRequest) {
     };
 
     console.log(
-      `[generate-view] Processing ${productType} with ${referenceImageParts.length} reference images`
+      `[generate-three-quarter] Processing ${productType} with ${referenceImageParts.length} reference images, aspect ratio: ${aspectRatio}, image size: ${imageSize}`
     );
 
     const response = await fetch(endpoint, {
@@ -190,9 +174,9 @@ export async function POST(request: NextRequest) {
       image: generatedImage,
     });
   } catch (error) {
-    console.error("Generate view error:", error);
+    console.error("Generate three-quarter view error:", error);
     return NextResponse.json(
-      { error: "Failed to generate lifestyle scene" },
+      { error: "Failed to generate 3/4 angle view" },
       { status: 500 }
     );
   }
