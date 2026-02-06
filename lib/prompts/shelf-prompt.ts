@@ -28,7 +28,7 @@ const SHELF_TECHNICAL = {
     focus: "Deep focus to capture both shelf detail and room context",
   },
   lighting: {
-    primary: "Soft diffused window light from camera-left, 10am morning sun",
+    primary: "Soft diffused natural light, 5500K warm neutral daylight",
     shadows:
       "Low contrast realistic shadows from props onto shelf surface and wall",
     temperature: "5500K warm neutral daylight",
@@ -48,6 +48,7 @@ export function buildShelfPrompt(): string {
   const floor = pickRandom(SCENE_VARIATIONS.floors);
   const sofa = pickRandom(SCENE_VARIATIONS.sofas);
   const propSet = pickRandom(SCENE_VARIATIONS.propSets);
+  const lightingDirection = pickRandom(SCENE_VARIATIONS.lightingDirections);
 
   // Log selected elements for debugging / output correlation
   console.log(`[shelf-prompt] Selected scene elements:`, {
@@ -88,10 +89,18 @@ ENVIRONMENT:
 - Flooring: ${floor}
 - The back wall must be visible through any open brackets, gaps, or transparent regions of the shelf
 
-SHELF PLACEMENT:
+SHELF PLACEMENT & SCALE:
 - The provided shelf image is mounted on the wall
-- The shelf is the primary surface for prop placement
-- Maintain the shelf's exact position, angle, and proportions as provided
+- Scale Constraint: The shelf is a wall-mounted accent piece; it must occupy no more than 25-30% of the total image width.
+- Proportional Anchoring: The shelf should be exactly 1/3 the width of the furniture (sofa or sideboard) positioned directly below it.
+- Vertical Alignment: Position the bottom of the shelf approximately 15-20 inches (40-50cm) above the top of the sofa/sideboard to create airy negative space.
+- Negative Space: Maintain at least 2 feet of empty wall space on the left and right sides of the shelf to ensure a curated, minimalist look.
+- Real-world Dimensions: Render the shelf at a realistic decorative scale (approximately 60-90cm / 2-3 feet wide).
+
+VISUAL HIERARCHY & COMPOSITION:
+- Dominant Subject: The sofa or sideboard must be the largest and most visually dominant piece of furniture in the frame.
+- Secondary Subject: The shelf is a delicate secondary element; do not allow the camera to "zoom in" or crop tightly on the shelf.
+- Camera Angle: Use a wide-angle architectural interior perspective to capture the shelf within the context of the full room.
 
 PROP ARRANGEMENT ON SHELF SURFACE:
 The following decorative items must be generated and placed ON TOP of the shelf:
@@ -128,13 +137,17 @@ RESTING SURFACE AWARENESS:
 SHADOW CASTING:
 - Cast realistic shadows from generated props onto the shelf surface
 - Cast shadows from props onto the wall behind
-- Light source: ${SHELF_TECHNICAL.lighting.primary}
+- Light source: ${lightingDirection}
 - Shadows should be low contrast, soft but defined, consistent with ${SHELF_TECHNICAL.lighting.temperature}
 
 ALPHA INTEGRITY:
 - The back wall must be visible through all open brackets and gaps in the shelf
 - Maintain crisp edges where the shelf meets the wall
 - No artificial glow or halo effects around shelf edges
+
+SCALE HIERARCHY & DEPTH:
+- Scale Hierarchy: Maintain strict furniture proportions — sofa is the anchor, shelf is the accessory.
+- Shadow Falloff: Ensure subtle, soft-edged shadows fall opposite the light source direction from the shelf brackets and props to create 3D depth.
 
 OUTPUT:
 Generate a photorealistic lifestyle scene featuring the provided shelf as an immutable element.

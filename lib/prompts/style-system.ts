@@ -11,7 +11,7 @@ export const AESTHETIC_DNA = {
 
   // Lighting specification
   lighting: {
-    primary: "Soft diffused window light, Left 45-degree angle, 10am morning sun",
+    primary: "Soft diffused natural light, 5500K warm neutral daylight",
     quality: "Soft, diffused through sheer linen",
     temperature: "5500K warm neutral daylight",
     shadows: "Low contrast shadows, soft and gentle, not harsh or dramatic",
@@ -154,6 +154,20 @@ export interface PropSet {
  * producing varied but aesthetically consistent lifestyle scenes.
  */
 export const SCENE_VARIATIONS = {
+  /**
+   * Lighting Direction Bank -- Varied light sources for natural diversity.
+   * Each generation randomly selects one option to avoid repetitive compositions.
+   */
+  lightingDirections: [
+    "Soft diffused window light from camera-left, high-key exposure, 10am morning sun, long soft-edge shadows, bright airy atmosphere.",
+    "Warm directional light from camera-left at a 30-degree angle, late afternoon sun, golden-hour glow, high-key with soft amber highlights.",
+    "Soft diffused light from camera-right, subtle wrap-around lighting, bright overcast day, minimal shadows, clean white aesthetic.",
+    "Direct natural light entering from an unseen side window, creating sharp rectangular light-pools on the floor, high-contrast but bright, 11am clear sky.",
+    "Dappled natural light from camera-left, soft leaf-shadow patterns (gobo) on the walls, diffused morning sun, ethereal and calm.",
+    "Bright overhead diffused daylight, mimic skylight effect, zero harsh shadows, even distribution of light, pristine white-out aesthetic.",
+    "Soft frontal diffused natural light from behind the camera, low-contrast, 'beauty light' effect, emphasizing textures and materials without deep shadows.",
+  ],
+
   /**
    * Wall Bank -- Texture & Architecture
    */

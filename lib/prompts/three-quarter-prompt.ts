@@ -57,9 +57,9 @@ CAMERA SPECIFICATION:
 - The wall art should appear in natural perspective foreshortening from this angle
 
 LIGHTING:
-- Primary: ${WALL_ART_SCENE.lighting.primary}
+- Primary: Match the lighting direction visible in the provided reference image exactly
 - Temperature: ${WALL_ART_SCENE.lighting.temperature}
-- Shadows: Adjusted for the new camera angle but maintaining same quality and softness
+- Shadows: Adjusted for the new camera angle but maintaining same quality, direction, and softness as the reference
 </scene_specification>
 
 <fidelity_instructions>
@@ -132,9 +132,9 @@ CAMERA SPECIFICATION:
 - The shelf should appear in natural perspective foreshortening from this angle
 
 LIGHTING:
-- Primary: ${AESTHETIC_DNA.lighting.primary}
+- Primary: Match the lighting direction visible in the provided reference image exactly
 - Temperature: ${AESTHETIC_DNA.lighting.temperature}
-- Shadows: Adjusted for the new camera angle but maintaining same quality and softness
+- Shadows: Adjusted for the new camera angle but maintaining same quality, direction, and softness as the reference
 </scene_specification>
 
 <fidelity_instructions>
