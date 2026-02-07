@@ -8,9 +8,11 @@ interface ResultDisplayProps {
   threeQuarterImage: string;
   originalImage: string;
   onReset: () => void;
+  onRegenerateThreeQuarter: () => void;
+  isRegenerating: boolean;
 }
 
-export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset }: ResultDisplayProps) {
+export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating }: ResultDisplayProps) {
   const [showComparison, setShowComparison] = useState(false);
 
   const handleDownload = async (dataUrl: string, filename: string) => {
@@ -117,19 +119,38 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
           <p className="text-sm font-medium text-jasper-navy">
             3/4 Angle View
           </p>
-          <button
-            onClick={() => handleDownload(threeQuarterImage, `three-quarter-view-${Date.now()}.png`)}
-            className="text-jasper-gray hover:text-jasper-coral transition-colors flex items-center gap-1 text-sm"
-          >
-            <Download className="w-4 h-4" />
-            Download
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onRegenerateThreeQuarter}
+              disabled={isRegenerating}
+              className="text-jasper-gray hover:text-jasper-coral transition-colors flex items-center gap-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRegenerating ? "animate-spin" : ""}`} />
+              {isRegenerating ? "Regenerating..." : "Regenerate"}
+            </button>
+            <button
+              onClick={() => handleDownload(threeQuarterImage, `three-quarter-view-${Date.now()}.png`)}
+              disabled={isRegenerating}
+              className="text-jasper-gray hover:text-jasper-coral transition-colors flex items-center gap-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-4 h-4" />
+              Download
+            </button>
+          </div>
         </div>
-        <div className="flex items-center justify-center">
+        <div className="relative flex items-center justify-center">
+          {isRegenerating && (
+            <div className="absolute inset-0 bg-white/70 rounded-lg flex items-center justify-center z-10">
+              <div className="flex flex-col items-center gap-3">
+                <RefreshCw className="w-8 h-8 text-jasper-coral animate-spin" />
+                <p className="text-sm font-medium text-jasper-navy">Regenerating 3/4 view...</p>
+              </div>
+            </div>
+          )}
           <img
             src={threeQuarterImage}
             alt="3/4 angle view result"
-            className="max-h-[400px] max-w-full object-contain rounded-lg"
+            className={`max-h-[400px] max-w-full object-contain rounded-lg ${isRegenerating ? "opacity-40" : ""}`}
           />
         </div>
       </div>

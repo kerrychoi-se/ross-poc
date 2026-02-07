@@ -197,7 +197,7 @@ export const SCENE_VARIATIONS = {
     "Creamy dry-stacked travertine or limestone feature wall",
     "Floor-to-ceiling soft white linen curtain backdrop",
     "Walls with a heavy, visible gesso or linen-wrapped canvas texture",
-    "Minimalist white walls with curved inset arched niches",
+    "Minimalist white walls with a smooth matte plaster finish",
   ],
 
   /**

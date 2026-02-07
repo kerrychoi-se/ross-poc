@@ -24,6 +24,7 @@ export default function Home() {
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [threeQuarterImage, setThreeQuarterImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isRegeneratingThreeQuarter, setIsRegeneratingThreeQuarter] = useState(false);
 
   const handleTypeSelect = (type: ProductType) => {
     setProductType(type);
@@ -60,6 +61,23 @@ export default function Home() {
       setAppState("upload");
     } finally {
       setProcessingStatus(null);
+    }
+  };
+
+  const handleRegenerateThreeQuarter = async () => {
+    if (!resultImage || !productType) return;
+
+    setIsRegeneratingThreeQuarter(true);
+    setError(null);
+
+    try {
+      const newThreeQuarterImg = await generateThreeQuarterView(resultImage, productType);
+      setThreeQuarterImage(newThreeQuarterImg);
+    } catch (err) {
+      console.error("Regeneration error:", err);
+      setError(err instanceof Error ? err.message : "An error occurred while regenerating the 3/4 view");
+    } finally {
+      setIsRegeneratingThreeQuarter(false);
     }
   };
 
@@ -149,6 +167,8 @@ export default function Home() {
               threeQuarterImage={threeQuarterImage}
               originalImage={uploadedImage!}
               onReset={handleReset}
+              onRegenerateThreeQuarter={handleRegenerateThreeQuarter}
+              isRegenerating={isRegeneratingThreeQuarter}
             />
           )}
         </div>
