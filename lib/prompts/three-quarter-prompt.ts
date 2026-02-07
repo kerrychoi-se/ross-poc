@@ -34,6 +34,7 @@ AESTHETIC DIRECTION:
 - Style: ${WALL_ART_SCENE.environment.aesthetic}
 - The provided reference image IS the authoritative scene — replicate every element faithfully
 - Match the exact lighting quality, material palette, and spatial arrangement from the reference
+- Maintain the casual, lived-in quality — do not make the scene look more staged from this angle
 </reference_guidance>
 
 <scene_specification>
@@ -43,11 +44,12 @@ The camera is repositioned at a 45-degree perspective to show the side profile a
 
 WHAT MUST BE PRESERVED FROM THE REFERENCE IMAGE:
 - The wall art: identical design, colors, frame, and mounting position on the wall
-- The sofa: identical fabric texture (high-texture oatmeal woven), cushion shape, and proportions
+- The sofa: identical fabric texture, cushion shape, proportions, and casual styling (draped throws, tossed pillows)
 - The rug: identical chunky cream wool texture and placement
 - The back wall: ${WALL_ART_SCENE.environment.backWall} with same texture
 - The flooring: ${WALL_ART_SCENE.environment.flooring} with same grain pattern
-- All decorative elements visible in the reference
+- All decorative elements visible in the reference (fresh flowers, gold accents, woven textures)
+- Windows with sheer curtains if visible in the reference
 
 CAMERA SPECIFICATION:
 - Angle: 3/4 perspective (approximately 45 degrees from the head-on position)
@@ -60,6 +62,7 @@ LIGHTING:
 - Primary: Match the lighting direction visible in the provided reference image exactly
 - Temperature: ${WALL_ART_SCENE.lighting.temperature}
 - Shadows: Adjusted for the new camera angle but maintaining same quality, direction, and softness as the reference
+- IMPORTANT: Keep shadows soft and low-contrast — avoid dark shadows
 </scene_specification>
 
 <fidelity_instructions>
@@ -68,6 +71,7 @@ The provided reference image contains the EXACT scene to be re-rendered from a n
 - Maintain identical materials: wood grain on floors, fabric textures on sofa, wall plaster texture
 - Maintain identical colors: do not shift the color palette, white balance, or saturation
 - Maintain identical object identity: same furniture pieces, same wall art, same proportions
+- Maintain the casual styling: throws should still look casually draped, pillows naturally placed
 - The only change is the camera angle — everything else must remain consistent
 
 SPATIAL REASONING:
@@ -81,7 +85,7 @@ OUTPUT:
 Generate a photorealistic lifestyle scene that is clearly the SAME room and SAME furniture
 as the reference image, but photographed from a 3/4 angle. The result should feel like
 a second photograph taken in the same room by moving the camera 45 degrees to the side.
-High-fidelity, cinematic lighting, consistent with high-end interior photography.
+Maintain the warm, casually elegant, lived-in quality of the original scene.
 </fidelity_instructions>
 `.trim();
 }
@@ -109,6 +113,7 @@ AESTHETIC DIRECTION:
 - Style: ${AESTHETIC_DNA.aesthetic}
 - The provided reference image IS the authoritative scene — replicate every element faithfully
 - Match the exact lighting quality, material palette, and spatial arrangement from the reference
+- Maintain the casual, lived-in quality — do not make the scene look more staged from this angle
 </reference_guidance>
 
 <scene_specification>
@@ -118,11 +123,12 @@ The camera is repositioned at a 45-degree perspective to show the side profile a
 
 WHAT MUST BE PRESERVED FROM THE REFERENCE IMAGE:
 - The shelf: identical wood finish, mounting, proportions, and wall position
-- All decorative props on the shelf: identical objects, materials, and arrangement
-- The sofa: identical fabric, shape, and placement as shown in the reference
+- All decorative props on the shelf: identical objects, materials, and casual arrangement
+- The sofa: identical fabric, shape, placement, and casual styling (draped throws, tossed pillows)
 - The back wall: identical texture, color, and material as shown in the reference
 - The flooring: identical material and grain pattern as shown in the reference
-- All styling details visible in the reference
+- All styling details visible in the reference (fresh flowers, gold accents, woven textures)
+- Windows with sheer curtains if visible in the reference
 
 CAMERA SPECIFICATION:
 - Angle: 3/4 perspective (approximately 45 degrees from the head-on position)
@@ -135,6 +141,7 @@ LIGHTING:
 - Primary: Match the lighting direction visible in the provided reference image exactly
 - Temperature: ${AESTHETIC_DNA.lighting.temperature}
 - Shadows: Adjusted for the new camera angle but maintaining same quality, direction, and softness as the reference
+- IMPORTANT: Keep shadows soft and low-contrast — avoid dark shadows
 </scene_specification>
 
 <fidelity_instructions>
@@ -143,6 +150,7 @@ The provided reference image contains the EXACT scene to be re-rendered from a n
 - Maintain identical materials: shelf wood grain, wall texture, fabric textures
 - Maintain identical colors: do not shift the color palette, white balance, or saturation
 - Maintain identical object identity: same shelf, same props, same sofa, same proportions
+- Maintain the casual styling: throws should still look casually draped, pillows naturally placed
 - The only change is the camera angle — everything else must remain consistent
 
 SPATIAL REASONING:
@@ -157,7 +165,7 @@ OUTPUT:
 Generate a photorealistic lifestyle scene that is clearly the SAME room and SAME furniture
 as the reference image, but photographed from a 3/4 angle. The result should feel like
 a second photograph taken in the same room by moving the camera 45 degrees to the side.
-High-fidelity, cinematic lighting, consistent with high-end interior photography.
+Maintain the warm, casually elegant, lived-in quality of the original scene.
 </fidelity_instructions>
 `.trim();
 }

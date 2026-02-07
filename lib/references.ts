@@ -72,7 +72,7 @@ async function loadImagesFromDirectory(
 /**
  * Load Maison aesthetic reference images
  *
- * These images define the "Maison Home Organic Coastal" aesthetic
+ * These images define the "Maison Home Casual Luxury" aesthetic
  * and are used for both wall-art and shelf scene generation.
  *
  * Directory: references/maison/

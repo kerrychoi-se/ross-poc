@@ -9,7 +9,7 @@ Ross POC is a Next.js application that takes product images (wall art or shelves
 1. **Background Removal** - Extracts the product from its original background using Jasper.ai
 2. **Scene Generation** - Composites the product into a beautifully styled interior scene using Google Gemini's image generation capabilities
 
-The generated scenes follow the "Maison Home Organic Coastal" aesthetic with natural lighting, textured materials, and a warm neutral palette.
+The generated scenes follow the "Maison Home Casual Luxury" aesthetic with natural lighting, textured materials, and a warm neutral palette with touches of gold and fresh flowers.
 
 ## Features
 
@@ -164,7 +164,7 @@ The application uses sophisticated prompt engineering to generate realistic life
 
 2. **Physics-Aware Compositing**: For wall art, the system generates realistic shadows cast onto the wall. For shelves, it creates props that respect gravity and rest naturally on surfaces.
 
-3. **Aesthetic DNA**: All scenes follow the "Maison Home Organic Coastal" style:
+3. **Aesthetic DNA**: All scenes follow the "Maison Home Casual Luxury" style:
    - Natural window light (5500K, 45-degree angle)
    - Cream, oatmeal, and warm white palette
    - High-texture materials (Belgian linen, bouclé, matte stoneware)

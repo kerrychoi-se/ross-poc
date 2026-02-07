@@ -14,14 +14,14 @@ references/
 
 ## Reference Usage
 
-### `/maison/` - Maison Home Organic Coastal Aesthetic
+### `/maison/` - Maison Home Casual Luxury Aesthetic
 
 These images define the target aesthetic for **all scene generation** (both wall art and shelf). They guide:
 - Natural lighting quality (soft daylight, 5500K, Left 45-degree angle)
 - Room atmosphere and environment style
 - Wall texture and flooring aesthetics
 - Material palette (cream, oatmeal, warm whites, light oak)
-- Overall "Maison Home Organic Coastal" vibe
+- Overall "Maison Home Casual Luxury" vibe
 
 **Best practices:**
 - Include images showing soft, diffused natural light
@@ -58,7 +58,7 @@ Images are loaded in alphabetical order.
 
 ## Aesthetic DNA
 
-These reference images should demonstrate the **Maison Home Organic Coastal** style:
+These reference images should demonstrate the **Maison Home Casual Luxury** style:
 
 | Property | Description |
 |----------|-------------|

@@ -18,6 +18,9 @@ export const TEXTURE_LOCK_DELIMITERS = [
   "no edge softening",
   "no color correction on the product",
   "no detail enhancement on the product",
+  "no re-interpretation of the product from a different angle",
+  "no added lighting effects (glare, specular highlights, reflections) not present in the original",
+  "no blending or feathering of product edges into the background",
 ] as const;
 
 /**
@@ -47,11 +50,43 @@ NATURAL NOISE PRESERVATION:
 `.trim();
 
 /**
+ * Generation Boundary
+ * Explicitly delineates what the model should and should not generate,
+ * making clear the product is a finished asset not to be redrawn.
+ */
+export const GENERATION_BOUNDARY = `
+GENERATION BOUNDARY:
+- MODIFICATION_TARGET: Generate ONLY the surrounding environment (walls, floor, furniture, props, lighting, shadows)
+- PRESERVATION_TARGET: The product image (Asset_1) is the FINAL, completed asset
+- Do NOT redraw, re-render, re-interpret, or generate a new version of this product
+- Do NOT infer what the product "should" look like — reproduce it exactly as provided
+- The product in the output must be indistinguishable from the product in the input
+`.trim();
+
+/**
+ * Input Asset Description
+ * Tells the model exactly what kind of image it is receiving so it can
+ * handle the transparent PNG cutout appropriately.
+ */
+export const INPUT_ASSET_DESCRIPTION = `
+INPUT ASSET DESCRIPTION:
+- The provided image (Asset_1) is a transparent PNG with the background already removed
+- This is a pre-processed product photograph, not a rendering, illustration, or concept
+- The cutout edges are final — do not re-cut, feather, blur, or modify the edge profile
+- Where the image has transparent/alpha regions, the generated background must show through naturally
+- The product's exact photographic qualities (lighting, grain, texture, color) are intentional and must be preserved
+`.trim();
+
+/**
  * Format all negative reference constraints as a single block for inclusion in prompts
  */
 export function formatNegativeReferenceBlock(): string {
   return `
 <identity_constraints>
+${INPUT_ASSET_DESCRIPTION}
+
+${GENERATION_BOUNDARY}
+
 ${REFDROP_INSTRUCTIONS}
 
 ${NOISE_CONDITIONING}
@@ -71,5 +106,7 @@ export function getNegativeReferenceData() {
     textureLockDelimiters: TEXTURE_LOCK_DELIMITERS,
     refdropInstructions: REFDROP_INSTRUCTIONS,
     noiseConditioning: NOISE_CONDITIONING,
+    generationBoundary: GENERATION_BOUNDARY,
+    inputAssetDescription: INPUT_ASSET_DESCRIPTION,
   };
 }
