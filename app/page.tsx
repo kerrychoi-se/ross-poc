@@ -6,6 +6,7 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { ProcessingStep } from "@/components/ProcessingStep";
 import { ResultDisplay } from "@/components/ResultDisplay";
 import { removeBackground, generateHeadOnView, generateThreeQuarterView } from "@/lib/api-client";
+import type { SceneOptions } from "@/lib/prompts/style-system";
 import { ArrowLeft } from "lucide-react";
 
 type ProductType = "wall-art" | "shelf" | null;
@@ -24,6 +25,7 @@ export default function Home() {
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [threeQuarterImage, setThreeQuarterImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sceneOptions, setSceneOptions] = useState<SceneOptions | null>(null);
   const [isRegeneratingThreeQuarter, setIsRegeneratingThreeQuarter] = useState(false);
 
   const handleTypeSelect = (type: ProductType) => {
@@ -44,7 +46,8 @@ export default function Home() {
 
       // Step 2: Generate head-on view
       setProcessingStatus({ step: "generating-view", progress: 0 });
-      const generatedImage = await generateHeadOnView(transparentImage, productType!);
+      const { image: generatedImage, sceneOptions: options } = await generateHeadOnView(transparentImage, productType!);
+      setSceneOptions(options);
       setProcessingStatus({ step: "generating-view", progress: 100 });
 
       // Step 3: Generate 3/4 angle view from the head-on image
@@ -88,6 +91,7 @@ export default function Home() {
     setResultImage(null);
     setThreeQuarterImage(null);
     setError(null);
+    setSceneOptions(null);
     setProcessingStatus(null);
   };
 
@@ -169,6 +173,7 @@ export default function Home() {
               onReset={handleReset}
               onRegenerateThreeQuarter={handleRegenerateThreeQuarter}
               isRegenerating={isRegeneratingThreeQuarter}
+              sceneOptions={sceneOptions}
             />
           )}
         </div>

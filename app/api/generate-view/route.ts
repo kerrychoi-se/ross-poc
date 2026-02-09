@@ -3,12 +3,15 @@ import { buildWallArtPrompt } from "@/lib/prompts/wall-art-prompt";
 import { buildShelfPrompt } from "@/lib/prompts/shelf-prompt";
 import { getReferenceImagePartsForProductType } from "@/lib/references";
 
+import type { SceneOptions } from "@/lib/prompts/style-system";
+
 type ProductType = "wall-art" | "shelf";
 
 /**
- * Build the appropriate prompt based on product type
+ * Build the appropriate prompt based on product type.
+ * Returns both the prompt string and the selected scene options metadata.
  */
-function buildPrompt(productType: ProductType): string {
+function buildPrompt(productType: ProductType): { prompt: string; sceneOptions: SceneOptions } {
   switch (productType) {
     case "wall-art":
       return buildWallArtPrompt();
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build the prompt for this product type
-    const prompt = buildPrompt(productType);
+    const { prompt, sceneOptions } = buildPrompt(productType);
 
     // Load reference images for this product type
     const referenceImageParts = await getReferenceImagePartsForProductType(
@@ -188,6 +191,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       image: generatedImage,
+      sceneOptions,
     });
   } catch (error) {
     console.error("Generate view error:", error);

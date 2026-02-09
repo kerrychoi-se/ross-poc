@@ -16,6 +16,7 @@ import {
   getSceneConstants,
   pickRandom,
   SCENE_VARIATIONS,
+  type SceneOptions,
 } from "./style-system";
 
 /**
@@ -45,7 +46,7 @@ const SHELF_TECHNICAL = {
  * Build the complete shelf compositing prompt.
  * Randomly selects wall, floor, sofa, and prop set from curated banks.
  */
-export function buildShelfPrompt(): string {
+export function buildShelfPrompt(): { prompt: string; sceneOptions: SceneOptions } {
   const negativeBlock = formatNegativeReferenceBlock();
   const aestheticDNA = formatAestheticDNA();
 
@@ -66,11 +67,22 @@ export function buildShelfPrompt(): string {
 
   const constants = getSceneConstants();
 
+  const sceneOptions: SceneOptions = {
+    lightingDirection,
+    wall,
+    floor,
+    sofa,
+    propSetName: propSet.name,
+    freshFlowers: constants.flowers,
+    goldAccent: constants.goldAccent,
+    wovenTexture: constants.wovenTexture,
+  };
+
   const propDescriptions = propSet.props
     .map((prop) => `- ${prop.description} (${prop.logic})`)
     .join("\n");
 
-  return `
+  const prompt = `
 CAMERA POSITION (HIGHEST PRIORITY):
 This image must be a perfectly straight-on, frontal photograph of a living room wall. The camera is on a tripod at the exact center of the room, aimed directly at the back wall at a perfect 90-degree angle. The wall appears as a flat, symmetrical rectangle in the frame. All vertical lines are perfectly vertical. All horizontal lines are perfectly horizontal. There are no converging perspective lines anywhere in the image. This is an architectural elevation photograph, not a perspective shot.
 
@@ -184,6 +196,8 @@ The shelf should be styled with the specified props, creating a warm, casually e
 The scene should feel like a beautiful home someone actually lives in — relaxed and inviting, not staged.
 </fidelity_instructions>
 `.trim();
+
+  return { prompt, sceneOptions };
 }
 
 /**

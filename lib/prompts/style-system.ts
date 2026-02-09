@@ -141,6 +141,22 @@ export function getMaterialPalette() {
 }
 
 // ---------------------------------------------------------------------------
+// Scene Options — metadata returned alongside the prompt so the UI can
+// display which bank selections were used for a given generation.
+// ---------------------------------------------------------------------------
+
+export interface SceneOptions {
+  lightingDirection: string;
+  wall?: string;        // shelf only
+  floor?: string;       // shelf only
+  sofa?: string;        // shelf only
+  propSetName?: string; // shelf only
+  freshFlowers: string;
+  goldAccent: string;
+  wovenTexture: string;
+}
+
+// ---------------------------------------------------------------------------
 // Scene Variation Banks
 // ---------------------------------------------------------------------------
 

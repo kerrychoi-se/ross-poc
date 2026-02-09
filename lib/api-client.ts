@@ -2,6 +2,8 @@
  * API client helper functions for the Ross POC application
  */
 
+import type { SceneOptions } from "./prompts/style-system";
+
 /**
  * Remove background from an image using Jasper.ai API
  * @param imageData - Base64 encoded image data (with or without data URL prefix)
@@ -29,12 +31,12 @@ export async function removeBackground(imageData: string): Promise<string> {
  * Generate a head-on view of the product using Gemini API
  * @param imageData - Base64 encoded transparent image data
  * @param productType - Type of product ("wall-art" or "shelf")
- * @returns Promise<string> - Base64 encoded generated image with data URL prefix
+ * @returns Promise with the generated image and the scene options used
  */
 export async function generateHeadOnView(
   imageData: string,
   productType: "wall-art" | "shelf"
-): Promise<string> {
+): Promise<{ image: string; sceneOptions: SceneOptions }> {
   const response = await fetch("/api/generate-view", {
     method: "POST",
     headers: {
@@ -52,7 +54,7 @@ export async function generateHeadOnView(
   }
 
   const result = await response.json();
-  return result.image;
+  return { image: result.image, sceneOptions: result.sceneOptions };
 }
 
 /**

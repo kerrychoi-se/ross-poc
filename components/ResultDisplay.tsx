@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RefreshCw, ArrowLeftRight } from "lucide-react";
+import { Download, RefreshCw, ArrowLeftRight, ChevronDown, ChevronUp } from "lucide-react";
+import type { SceneOptions } from "@/lib/prompts/style-system";
 
 interface ResultDisplayProps {
   imageUrl: string;
@@ -10,10 +11,12 @@ interface ResultDisplayProps {
   onReset: () => void;
   onRegenerateThreeQuarter: () => void;
   isRegenerating: boolean;
+  sceneOptions?: SceneOptions | null;
 }
 
-export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating }: ResultDisplayProps) {
+export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating, sceneOptions }: ResultDisplayProps) {
   const [showComparison, setShowComparison] = useState(false);
+  const [showSceneOptions, setShowSceneOptions] = useState(false);
 
   const handleDownload = async (dataUrl: string, filename: string) => {
     try {
@@ -57,6 +60,47 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
           Your image has been transformed successfully
         </p>
       </div>
+
+      {/* Scene Options (collapsible) */}
+      {sceneOptions && (
+        <div className="bg-jasper-cream-light rounded-xl overflow-hidden">
+          <button
+            onClick={() => setShowSceneOptions(!showSceneOptions)}
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-jasper-cream/50 transition-colors"
+          >
+            <p className="text-sm font-medium text-jasper-navy">
+              Scene Options Used
+            </p>
+            {showSceneOptions ? (
+              <ChevronUp className="w-4 h-4 text-jasper-gray" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-jasper-gray" />
+            )}
+          </button>
+          {showSceneOptions && (
+            <div className="px-4 pb-4 space-y-3">
+              <div className="grid grid-cols-1 gap-2">
+                <SceneOptionRow label="Lighting" value={sceneOptions.lightingDirection} />
+                {sceneOptions.wall && (
+                  <SceneOptionRow label="Wall" value={sceneOptions.wall} />
+                )}
+                {sceneOptions.floor && (
+                  <SceneOptionRow label="Floor" value={sceneOptions.floor} />
+                )}
+                {sceneOptions.sofa && (
+                  <SceneOptionRow label="Sofa" value={sceneOptions.sofa} />
+                )}
+                {sceneOptions.propSetName && (
+                  <SceneOptionRow label="Prop Set" value={sceneOptions.propSetName} />
+                )}
+                <SceneOptionRow label="Fresh Flowers" value={sceneOptions.freshFlowers} />
+                <SceneOptionRow label="Gold Accent" value={sceneOptions.goldAccent} />
+                <SceneOptionRow label="Woven Texture" value={sceneOptions.wovenTexture} />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Comparison View */}
       {showComparison && (
@@ -181,6 +225,17 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
           Start Over
         </button>
       </div>
+    </div>
+  );
+}
+
+function SceneOptionRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-3 text-sm">
+      <span className="font-medium text-jasper-navy whitespace-nowrap min-w-[100px]">
+        {label}:
+      </span>
+      <span className="text-jasper-gray">{value}</span>
     </div>
   );
 }

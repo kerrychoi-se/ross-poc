@@ -7,7 +7,7 @@
  */
 
 import { formatNegativeReferenceBlock } from "./negative-reference";
-import { formatAestheticDNA, pickRandom, SCENE_VARIATIONS, getSceneConstants } from "./style-system";
+import { formatAestheticDNA, pickRandom, SCENE_VARIATIONS, getSceneConstants, type SceneOptions } from "./style-system";
 
 /**
  * Scene configuration for wall art scene generation
@@ -42,13 +42,20 @@ export const WALL_ART_SCENE = {
 /**
  * Build the complete wall art compositing prompt
  */
-export function buildWallArtPrompt(): string {
+export function buildWallArtPrompt(): { prompt: string; sceneOptions: SceneOptions } {
   const negativeBlock = formatNegativeReferenceBlock();
   const aestheticDNA = formatAestheticDNA();
   const lightingDirection = pickRandom(SCENE_VARIATIONS.lightingDirections);
   const constants = getSceneConstants();
 
-  return `
+  const sceneOptions: SceneOptions = {
+    lightingDirection,
+    freshFlowers: constants.flowers,
+    goldAccent: constants.goldAccent,
+    wovenTexture: constants.wovenTexture,
+  };
+
+  const prompt = `
 CAMERA POSITION (HIGHEST PRIORITY):
 This image must be a perfectly straight-on, frontal photograph of a living room wall. The camera is on a tripod at the exact center of the room, aimed directly at the back wall at a perfect 90-degree angle. The wall appears as a flat, symmetrical rectangle in the frame. All vertical lines are perfectly vertical. All horizontal lines are perfectly horizontal. There are no converging perspective lines anywhere in the image. This is an architectural elevation photograph, not a perspective shot.
 
@@ -144,6 +151,8 @@ The scene should feel warm, casually elegant, and lived-in — like a beautiful 
 Consistent with high-end interior photography but with a relaxed, unstaged quality.
 </fidelity_instructions>
 `.trim();
+
+  return { prompt, sceneOptions };
 }
 
 /**
