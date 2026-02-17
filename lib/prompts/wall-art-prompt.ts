@@ -7,7 +7,7 @@
  */
 
 import { formatNegativeReferenceBlock } from "./negative-reference";
-import { formatAestheticDNA, pickRandom, SCENE_VARIATIONS, getSceneConstants, type SceneOptions } from "./style-system";
+import { AESTHETIC_DNA, formatAestheticDNA, pickRandom, SCENE_VARIATIONS, getSceneConstants, type SceneOptions } from "./style-system";
 
 /**
  * Scene configuration for wall art scene generation
@@ -45,11 +45,19 @@ export const WALL_ART_SCENE = {
 export function buildWallArtPrompt(): { prompt: string; sceneOptions: SceneOptions } {
   const negativeBlock = formatNegativeReferenceBlock();
   const aestheticDNA = formatAestheticDNA();
+
+  // Select randomized scene elements from the same banks shelf uses (minus props)
+  const wall = pickRandom(SCENE_VARIATIONS.walls);
+  const floor = pickRandom(SCENE_VARIATIONS.floors);
+  const sofa = pickRandom(SCENE_VARIATIONS.sofas);
   const lightingDirection = pickRandom(SCENE_VARIATIONS.lightingDirections);
   const constants = getSceneConstants();
 
   const sceneOptions: SceneOptions = {
     lightingDirection,
+    wall,
+    floor,
+    sofa,
     freshFlowers: constants.flowers,
     goldAccent: constants.goldAccent,
     wovenTexture: constants.wovenTexture,
@@ -72,7 +80,7 @@ ${negativeBlock}
 ${aestheticDNA}
 
 AESTHETIC DIRECTION:
-- Style: ${WALL_ART_SCENE.environment.aesthetic}
+- Style: ${AESTHETIC_DNA.aesthetic}
 - The reference images provided demonstrate the target lighting quality and material palette
 - Use references to guide atmosphere and texture choices, not to override the scene structure
 - IMPORTANT: The scene must feel casual and lived-in, NOT staged or overly styled
@@ -80,11 +88,11 @@ AESTHETIC DIRECTION:
 
 <scene_specification>
 GENERATIVE SUBJECT:
-${WALL_ART_SCENE.generativeSubject}
+${sofa}
 
 ENVIRONMENT:
-- Back Wall: ${WALL_ART_SCENE.environment.backWall}
-- Flooring: ${WALL_ART_SCENE.environment.flooring}
+- Back Wall: ${wall}
+- Flooring: ${floor}
 - Atmosphere: ${WALL_ART_SCENE.environment.elements}
 - Windows: Include visible windows or French doors with sheer white linen curtains softly filtering natural light into the room
 
@@ -95,12 +103,12 @@ MANDATORY SCENE ELEMENTS (must appear in every scene):
 
 WALL ART PLACEMENT & SCALE:
 - The provided wall art image must be mounted on the back wall
-- Scale Constraint: The wall art is a decorative accent; it must occupy no more than 25-30% of the total image width.
-- Proportional Anchoring: The wall art should be approximately 1/3 the width of the sofa positioned directly below it.
+- Scale Constraint: The wall art is a decorative accent; it must occupy no more than 15-20% of the total image width.
+- Proportional Anchoring: The wall art should be approximately 1/4 the width of the sofa positioned directly below it.
 - Vertical Alignment: Position the bottom edge of the wall art approximately 8-12 inches (20-30cm) above eye level, with ample breathing room above the sofa back.
 - Negative Space: Maintain generous empty wall space on all sides of the wall art for a relaxed, airy feel — not a tight gallery arrangement.
-- Real-world Dimensions: Render the wall art at a realistic decorative scale (approximately 60-90cm / 2-3 feet wide).
-- Render the plaster wall texture visible through any transparent or alpha regions in the wall art
+- Real-world Dimensions: Render the wall art at a realistic decorative scale (approximately 40-60cm / 16-24 inches wide).
+- Render the back wall texture visible through any transparent or alpha regions in the wall art
 
 VISUAL HIERARCHY & COMPOSITION:
 - Dominant Subject: The sofa and rug must be the largest and most visually dominant elements in the frame.
@@ -125,13 +133,13 @@ The wall art image (Asset_1) is a FIXED GEOMETRIC CONSTANT.
 - The wall art must appear exactly as provided in the input
 
 SHADOW CASTING:
-- Cast soft, realistic contact shadows from the wall art onto the plaster wall
+- Cast soft, realistic contact shadows from the wall art onto the back wall
 - Light source: ${lightingDirection}
 - Shadow softness should match ${WALL_ART_SCENE.lighting.temperature} natural daylight
 - IMPORTANT: Avoid dark shadows — all shadows must be soft, low-contrast, and gentle
 
 ALPHA INTEGRITY:
-- If the wall art has transparent regions, the plaster wall must be visible through them
+- If the wall art has transparent regions, the back wall must be visible through them
 - Maintain crisp edges where the wall art meets its frame or border
 - No artificial glow or halo effects around the wall art edges
 

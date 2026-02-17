@@ -211,7 +211,6 @@ export const SCENE_VARIATIONS = {
     "Classic Parisian-style wainscoting with picture frame molding in a crisp 'All White' finish",
     "Slim-profile vertical micro-shiplap paneling for a relaxed, modern cottage feel",
     "Creamy dry-stacked travertine or limestone feature wall",
-    "Floor-to-ceiling soft white linen curtain backdrop",
     "Walls with a heavy, visible gesso or linen-wrapped canvas texture",
     "Minimalist white walls with a smooth matte plaster finish",
   ],

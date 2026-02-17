@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildThreeQuarterPrompt } from "@/lib/prompts/three-quarter-prompt";
-import { getReferenceImagePartsForProductType } from "@/lib/references";
 
 type ProductType = "wall-art" | "shelf";
 
@@ -56,20 +55,14 @@ export async function POST(request: NextRequest) {
     // Build the 3/4 angle prompt for this product type
     const prompt = buildThreeQuarterPrompt(productType as ProductType);
 
-    // Load reference images for aesthetic guidance
-    const referenceImageParts = await getReferenceImagePartsForProductType(
-      productType
-    );
-
-    // Build the content parts array
-    // Order: prompt text, head-on reference image, aesthetic reference images
+    // Build the content parts array: prompt text + head-on reference image only.
+    // The head-on image already encodes the full aesthetic (materials, lighting,
+    // palette) so no additional reference images are needed.
     const contentParts: Array<
       | { text: string }
       | { inline_data: { mime_type: string; data: string } }
     > = [
-      // Primary 3/4 angle prompt
       { text: prompt },
-      // The head-on generated image as the subject reference
       {
         inline_data: {
           mime_type: mimeType,
@@ -77,14 +70,6 @@ export async function POST(request: NextRequest) {
         },
       },
     ];
-
-    // Add aesthetic reference images if available
-    if (referenceImageParts.length > 0) {
-      contentParts.push({
-        text: "\n\nREFERENCE IMAGES (for aesthetic and material guidance only - do not copy directly):",
-      });
-      contentParts.push(...referenceImageParts);
-    }
 
     // Call Gemini API with imageConfig for aspect ratio and resolution control
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -105,7 +90,7 @@ export async function POST(request: NextRequest) {
     };
 
     console.log(
-      `[generate-three-quarter] Processing ${productType} with ${referenceImageParts.length} reference images, aspect ratio: ${aspectRatio}, image size: ${imageSize}`
+      `[generate-three-quarter] Processing ${productType}, aspect ratio: ${aspectRatio}, image size: ${imageSize}`
     );
 
     const response = await fetch(endpoint, {

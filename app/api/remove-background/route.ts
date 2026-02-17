@@ -3,6 +3,9 @@ import sharp from "sharp";
 
 // Jasper API limits: 30MB file size, 25 megapixels (5000x5000 max)
 const MAX_DIMENSION = 5000;
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+const SCALE_FACTOR = 0.8;
+const MAX_RESIZE_ITERATIONS = 5;
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,19 +33,49 @@ export async function POST(request: NextRequest) {
     }
 
     // Decode the image and check/resize dimensions
+    // limitInputPixels: false allows sharp to handle very large images
+    // — our code resizes them down to MAX_DIMENSION before sending to Jasper
     const imageBuffer = Buffer.from(base64Image, "base64");
-    const sharpImage = sharp(imageBuffer);
+    const sharpImage = sharp(imageBuffer, { limitInputPixels: false });
     const metadata = await sharpImage.metadata();
     
     const originalWidth = metadata.width || 0;
     const originalHeight = metadata.height || 0;
 
-    // Resize if exceeds Jasper limits
+    // Resize if exceeds Jasper dimension limits
     let processedBuffer = imageBuffer;
     if (originalWidth > MAX_DIMENSION || originalHeight > MAX_DIMENSION) {
       processedBuffer = await sharpImage
         .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
         .toBuffer();
+    }
+
+    // Reduce file size if exceeds Jasper 30MB limit
+    if (processedBuffer.length > MAX_FILE_SIZE) {
+      console.log(
+        `[remove-background] Image exceeds 30MB (${(processedBuffer.length / 1024 / 1024).toFixed(1)}MB), reducing...`
+      );
+
+      let currentBuffer = processedBuffer;
+      let iterations = 0;
+
+      while (currentBuffer.length > MAX_FILE_SIZE && iterations < MAX_RESIZE_ITERATIONS) {
+        const meta = await sharp(currentBuffer).metadata();
+        const newWidth = Math.round((meta.width || 1000) * SCALE_FACTOR);
+        const newHeight = Math.round((meta.height || 1000) * SCALE_FACTOR);
+
+        currentBuffer = await sharp(currentBuffer)
+          .resize(newWidth, newHeight, { fit: "inside" })
+          .png({ compressionLevel: 9, adaptiveFiltering: true })
+          .toBuffer();
+
+        iterations++;
+        console.log(
+          `[remove-background] Resize pass ${iterations}: ${newWidth}x${newHeight}, ${(currentBuffer.length / 1024 / 1024).toFixed(1)}MB`
+        );
+      }
+
+      processedBuffer = currentBuffer;
     }
 
     // Build the request payload as FormData (Jasper expects multipart/form-data)
