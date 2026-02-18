@@ -23,6 +23,13 @@ PRESERVE FROM REFERENCE:
 - Same room, same furniture, same wall art, same materials and colors
 - Same lighting direction and warmth
 - Same casual, lived-in styling (draped throws, tossed pillows, natural arrangements)
+- Same high-key, bright, flooded-with-light exposure — the 3/4 view must be just as bright and airy as the head-on view
+
+LIGHTING & SHADOW CONSISTENCY (CRITICAL):
+- Maintain the same high-key overexposed brightness from the reference image — do NOT darken the scene for the new angle.
+- All shadows must remain ultra-soft, barely visible, consistent direction, never darker than 15% grey.
+- Gold and brass elements must remain warm-toned with dimensional highlights — no greenish or flat rendering.
+- The product (wall art) must remain pixel-accurate with no modifications to color, texture, or detail.
 
 DEPTH CUES (important):
 - Floor planks or tiles must converge toward a vanishing point
@@ -32,7 +39,7 @@ DEPTH CUES (important):
 - Objects closer to the camera should appear larger than those further away
 - The room corner or adjacent wall may become visible from this angle
 
-OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
+OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It must be just as BRIGHT and HIGH-KEY as the reference — flooded with natural light, almost overexposed. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
 `.trim();
 }
 
@@ -52,6 +59,13 @@ PRESERVE FROM REFERENCE:
 - Same room, same furniture, same shelf, same decorative props, same materials and colors
 - Same lighting direction and warmth
 - Same casual, lived-in styling (draped throws, tossed pillows, natural arrangements)
+- Same high-key, bright, flooded-with-light exposure — the 3/4 view must be just as bright and airy as the head-on view
+
+LIGHTING & SHADOW CONSISTENCY (CRITICAL):
+- Maintain the same high-key overexposed brightness from the reference image — do NOT darken the scene for the new angle.
+- All shadows must remain ultra-soft, barely visible, consistent direction, never darker than 15% grey.
+- Gold and brass elements must remain warm-toned with dimensional highlights — no greenish or flat rendering.
+- The product (shelf) must remain pixel-accurate with no modifications to color, texture, or detail.
 
 DEPTH CUES (important):
 - Floor planks or tiles must converge toward a vanishing point
@@ -62,7 +76,7 @@ DEPTH CUES (important):
 - Objects closer to the camera should appear larger than those further away
 - The room corner or adjacent wall may become visible from this angle
 
-OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
+OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It must be just as BRIGHT and HIGH-KEY as the reference — flooded with natural light, almost overexposed. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
 `.trim();
 }
 

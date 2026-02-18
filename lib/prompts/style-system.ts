@@ -7,14 +7,20 @@
 
 export const AESTHETIC_DNA = {
   // Core aesthetic identity
-  aesthetic: "Maison Home Casual Luxury",
+  aesthetic:
+    "Maison Home Casual Luxury — aspirational yet lived-in, shabby chic yet tailored. For a modern working woman with taste and disposable income. Think bright Parisian apartment meets California light.",
 
-  // Lighting specification
+  // Lighting specification — HIGH-KEY FLOODED LOOK
   lighting: {
-    primary: "Soft diffused natural light, 5500K warm neutral daylight",
-    quality: "Soft, diffused through sheer linen",
-    temperature: "5500K warm neutral daylight",
-    shadows: "Low contrast shadows, soft and gentle, not harsh or dramatic",
+    primary:
+      "High-key overexposed natural light flooding the entire scene, 5600K bright neutral daylight — the room should feel drenched in light",
+    quality:
+      "Extremely bright and airy, diffused through sheer white linen, every surface washed in soft white light with almost no dark areas",
+    temperature: "5600K bright neutral daylight with slight warm bias",
+    shadows:
+      "Near-invisible shadows — extremely low contrast, barely perceptible, never darker than 15% grey. No dark shadows anywhere in the scene.",
+    exposure:
+      "+1.5 to +2.0 EV overexposure — whites should bloom slightly, mid-tones pushed bright, no muddy or dark areas anywhere",
   },
 
   // Color palette
@@ -33,10 +39,14 @@ export const AESTHETIC_DNA = {
       "bouclé",
       "chunky cream wool",
     ],
-    woods: ["light oak", "white oak", "reclaimed wood"],
+    woods: ["light oak", "white oak", "bleached white oak"],
     ceramics: ["matte white stoneware", "handmade ceramics", "travertine"],
     textiles: ["high-thread-count linen", "sheer curtains", "wool rugs"],
-    metallics: ["brushed gold", "warm brass", "antique gold hardware"],
+    metallics: [
+      "warm 18K brushed gold with visible micro-highlights and soft reflections — NOT flat, NOT greenish",
+      "rich warm brass with subtle patina and specular highlights catching the light",
+      "antique gold hardware with warm amber undertones and dimensional light-play",
+    ],
     wovenAccents: [
       "woven seagrass storage basket",
       "striped woven ottoman pouf",
@@ -75,7 +85,7 @@ export const AESTHETIC_DNA = {
     geometricRules:
       "Vertical lines perfectly vertical, horizontal lines perfectly horizontal, flat wall plane rendering",
     style:
-      "Relaxed, lived-in elegance with a casual feel — not staged or overly styled",
+      "Aspirational but approachable — a beautiful home that feels real and lived-in. Shabby chic elegance with tailored details. Not a showroom, not rustic farmhouse. The home of a stylish woman who entertains effortlessly.",
   },
 } as const;
 
@@ -91,6 +101,7 @@ export function formatAestheticDNA(): string {
     <quality>${AESTHETIC_DNA.lighting.quality}</quality>
     <temperature>${AESTHETIC_DNA.lighting.temperature}</temperature>
     <shadows>${AESTHETIC_DNA.lighting.shadows}</shadows>
+    <exposure>${AESTHETIC_DNA.lighting.exposure}</exposure>
   </lighting>
   
   <palette>
@@ -154,6 +165,7 @@ export interface SceneOptions {
   freshFlowers: string;
   goldAccent: string;
   wovenTexture: string;
+  livedInDetail: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -194,38 +206,38 @@ export const SCENE_VARIATIONS = {
    * Each generation randomly selects one option to avoid repetitive compositions.
    */
   lightingDirections: [
-    "Soft diffused window light from camera-left, high-key exposure, 10am morning sun, long soft-edge shadows, bright airy atmosphere.",
-    "Warm directional light from camera-left at a 30-degree angle, late afternoon sun, golden-hour glow, high-key with soft amber highlights.",
-    "Soft diffused light from camera-right, subtle wrap-around lighting, bright overcast day, minimal shadows, clean white aesthetic.",
-    "Soft directional light entering from an unseen side window, gentle light gradients across the floor, bright and airy, 11am clear sky, no dark shadows.",
-    "Gentle filtered natural light from camera-left, soft and even with subtle warmth on the walls, diffused morning sun, ethereal and calm, no dark shadows.",
-    "Bright overhead diffused daylight, mimic skylight effect, zero harsh shadows, even distribution of light, pristine white-out aesthetic.",
-    "Soft frontal diffused natural light from behind the camera, low-contrast, 'beauty light' effect, emphasizing textures and materials without deep shadows.",
+    "Flooded high-key window light from camera-left, overexposed +1.5 EV, 10am bright morning sun, near-invisible pale shadows, entire room drenched in white light.",
+    "Bright overexposed natural light from camera-left at a 30-degree angle, midday sun flooding through large windows, high-key with luminous warm-white highlights, shadows barely perceptible.",
+    "Flooded diffused light from camera-right, wrap-around brightness filling every corner, bright clear day, near-zero shadows, pristine white airy aesthetic.",
+    "Brilliant natural light pouring from an unseen side window, light gradients washed bright across all surfaces, 11am clear sky, flooded high-key exposure, no dark areas anywhere.",
+    "Bright even natural light from camera-left flooding the room, every surface bathed in soft white luminosity, diffused morning sun, ethereal bright atmosphere, shadows barely a whisper.",
+    "Intense overhead diffused daylight flooding from skylights, overexposed high-key, zero shadows, perfectly even white light distribution, pristine sun-drenched aesthetic.",
+    "Bright frontal diffused natural light from behind the camera, flooded flat lighting, high-key overexposure, emphasizing textures and materials in brilliant white light, no shadows deeper than 10% grey.",
   ],
 
   /**
    * Wall Bank -- Texture & Architecture
    */
   walls: [
-    "Soft 'Swiss Coffee' limewash plaster with subtle movement and matte texture",
-    "Classic Parisian-style wainscoting with picture frame molding in a crisp 'All White' finish",
-    "Slim-profile vertical micro-shiplap paneling for a relaxed, modern cottage feel",
-    "Creamy dry-stacked travertine or limestone feature wall",
-    "Walls with a heavy, visible gesso or linen-wrapped canvas texture",
-    "Minimalist white walls with a smooth matte plaster finish",
+    "Soft 'Swiss Coffee' limewash plaster with subtle movement and matte texture, bright and luminous",
+    "Classic Parisian-style wainscoting with picture frame molding in a crisp 'All White' finish, catching the light beautifully",
+    "Slim-profile vertical micro-shiplap paneling in bright white for a relaxed, modern cottage feel",
+    "Bright limewash Roman clay in warm white with soft tonal variation, sun-washed and luminous",
+    "Clean gallery-white walls with subtle hand-troweled plaster texture, reflecting abundant natural light",
+    "Minimalist white walls with a smooth matte plaster finish, bright and airy",
   ],
 
   /**
    * Floor Bank -- Foundation & Warmth
    */
   floors: [
-    "Wide-plank white oak with matte finish, ultra-light blonde with minimal knots",
-    "Bleached oak herringbone parquet in a tight pattern for a European touch",
-    "Warm-toned cream-colored polished concrete for an industrial-organic blend",
-    "Large chunky-knit natural jute rug covering 80% of the floor space",
-    "Large-format honed light travertine tiles with soft blurred grout lines",
-    "Tight-knit sisal flooring in a sand-colored hue",
-    "Very pale weathered grey-toned reclaimed elm planks with a soft, lived-in patina",
+    "Wide-plank white oak with matte finish, ultra-light blonde with minimal knots, bright and clean",
+    "Bleached oak herringbone parquet in a tight pattern for a bright European touch",
+    "Pale cream limestone tiles with barely visible veining, luminous and light-reflecting",
+    "Large chunky-knit natural jute rug in a light sand tone covering 80% of the floor space",
+    "Large-format honed light travertine tiles with soft blurred grout lines, sun-washed appearance",
+    "Ultra-light whitewashed wide-plank oak with a soft matte sheen, bright Scandinavian feel",
+    "Tight-knit sisal flooring in a pale sand-colored hue, light and natural",
   ],
 
   /**
@@ -233,13 +245,13 @@ export const SCENE_VARIATIONS = {
    * Each entry is a complete sentence describing placement relative to the shelf.
    */
   sofas: [
-    "A low-profile oversized slipcovered linen 'Cloud' sectional in Optic White, positioned beneath the shelf, with a soft cream throw draped casually over one arm and a few mismatched pillows in dusty blue and oatmeal tossed against the cushions.",
-    "A sculptural kidney-bean shaped curved sofa in heavy cream bouclé, placed beneath the shelf, with a lightweight knit blanket folded loosely over the backrest and a couple of soft grey linen pillows.",
-    "A high-arm deep-seated tuxedo sofa with square tufting in an oatmeal wool blend, centered below the shelf, with a chunky cream wool throw draped over one side and pillows in muted slate and warm white arranged casually.",
-    "A structured yet soft Belgium track-arm sofa with thin track arms and down-filled cushions, positioned beneath the shelf, with a linen throw blanket tossed across the seat and a few soft blue-grey accent pillows.",
-    "A 'deconstructed' sofa with a light oak frame, exposed linen-wrapped cushions, and leather straps, resting below the shelf, with a waffle-weave throw folded over one arm and natural linen pillows slightly askew.",
-    "A blocky modular piped-linen sectional with prominent seams in Greige, arranged beneath the shelf, with a lightweight cream blanket draped across one cushion and a mix of soft oatmeal and dusty blue throw pillows.",
-    "A modern camelback sofa with a slight soft curve to the backrest and cylindrical bolster pillows, placed below the shelf, with a cashmere-blend throw in warm white draped loosely over one arm and a stack of two coffee-table books on one cushion.",
+    "A low-profile oversized slipcovered linen 'Cloud' sectional in Optic White, positioned beneath the shelf. The seat cushions show soft body impressions where someone was just sitting. A cream throw is bunched up in one corner rather than neatly draped. Mismatched pillows in dusty blue and oatmeal are squished against the arm — one has slipped halfway off onto the cushion edge.",
+    "A sculptural kidney-bean shaped curved sofa in heavy cream bouclé, placed beneath the shelf. A lightweight knit blanket has been pulled to one side and is half-sliding off the seat. A couple of soft grey linen pillows are stacked unevenly, one dented from being leaned against. The cushions show a gentle impression of recent use.",
+    "A high-arm deep-seated tuxedo sofa with square tufting in an oatmeal wool blend, centered below the shelf. A chunky cream wool throw is bunched into a nest in one corner as if someone was curled up reading. Pillows in muted slate and warm white are pushed to the sides — one has fallen against the arm at an angle, another is slightly squished flat.",
+    "A structured yet soft Belgium track-arm sofa with thin track arms and down-filled cushions, positioned beneath the shelf. A linen throw blanket is tangled loosely across the seat, trailing over one arm. A few soft blue-grey accent pillows are scattered unevenly — one propped upright, one lying flat, one pushed into the corner. The down cushions show soft sitting impressions.",
+    "A 'deconstructed' sofa with a light oak frame, exposed linen-wrapped cushions, and leather straps, resting below the shelf. A waffle-weave throw is half-pulled off the arm, one end pooling slightly. Natural linen pillows are askew — one flopped on its side, another wedged into the corner. The seat cushion fabric is gently rumpled from use.",
+    "A blocky modular piped-linen sectional with prominent seams in Greige, arranged beneath the shelf. A lightweight cream blanket is bunched and twisted across one cushion as if someone pushed it aside when standing up. Soft oatmeal and dusty blue throw pillows are scattered in a loose cluster — not lined up, not evenly spaced. One pillow sits on the floor beside the sofa where it tumbled.",
+    "A modern camelback sofa with a slight soft curve to the backrest and cylindrical bolster pillows, placed below the shelf. A cashmere-blend throw in warm white is bunched up against one arm, half-draped and half-fallen. A couple of pillows are stacked unevenly against the opposite arm, and a coffee-table book lies open face-down on the middle cushion. The seat shows soft impressions from someone who was just sitting there.",
   ],
 
   /**
@@ -386,6 +398,21 @@ export const SCENE_VARIATIONS = {
       ],
     },
   ] as const satisfies readonly PropSet[],
+
+  /**
+   * Lived-In Details Bank -- Signs of real human activity.
+   * Each generation randomly selects one vignette to inject into the scene,
+   * adding aspirational but authentic "someone lives here" texture.
+   */
+  livedInDetails: [
+    "An open hardcover book lying face-down on the sofa cushion mid-read, with a pair of tortoiseshell reading glasses resting on the sofa arm nearby.",
+    "A handmade ceramic mug of half-finished coffee sitting on a side table, with a faint ring stain forming underneath it on a small linen coaster.",
+    "A lightweight cashmere cardigan in soft oatmeal draped over the sofa arm as if just shrugged off, one sleeve trailing down.",
+    "A pair of leather ballet flats kicked off near the base of the sofa, slightly askew and pointing in different directions — someone just got comfortable.",
+    "An open linen-covered notebook or journal with a brass pen resting across it, left on the sofa cushion as if mid-thought.",
+    "A small stack of glossy magazines fanned out on a side table, the top one open to a dog-eared page, a reading glasses case beside them.",
+    "A knit throw blanket pulled halfway off the sofa and pooling gently on the floor, as if someone just stood up and walked away.",
+  ],
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -403,11 +430,11 @@ export const SCENE_CONSTANTS = {
    * Randomly select one arrangement per generation.
    */
   freshFlowers: [
-    "A clear glass vase with a casual bunch of fresh white roses, loosely arranged as if just gathered from a garden",
-    "A stoneware pitcher holding fresh cream and blush peonies, petals slightly open and natural",
-    "A simple glass cylinder vase with fresh white hydrangeas, soft and full",
-    "A ceramic jug with a few stems of fresh white ranunculus and eucalyptus, casually placed",
-    "A small fluted glass vase holding a cluster of fresh white garden roses and greenery",
+    "A clear glass vase with a loose bunch of white roses — still beautiful but a day or two old, a few petals have dropped onto the surface below, one stem leaning out of the arrangement",
+    "A stoneware pitcher holding cream and blush peonies, petals fully open and beginning to soften, a couple of fallen petals scattered on the table around the base",
+    "A simple glass cylinder vase with white hydrangeas, soft and full but slightly past peak — one or two florets browning at the edges, a natural imperfection",
+    "A ceramic jug with a few stems of white ranunculus and eucalyptus, casually placed and slightly drooping — the water level is low, a fallen leaf rests on the surface nearby",
+    "A small fluted glass vase holding a cluster of white garden roses and greenery — petals softly opening, a couple beginning to curl at the edges, one petal on the table",
   ],
 
   /**
@@ -416,11 +443,11 @@ export const SCENE_CONSTANTS = {
    * Randomly select one per generation.
    */
   goldAccents: [
-    "A small brushed gold tray on a side table or surface nearby",
-    "A warm brass side table or accent table with a geometric frame",
-    "A gold-finish picture frame leaning casually on a surface",
-    "A small antique brass bowl or dish placed on a nearby surface",
-    "A gold-rimmed glass or decorative object catching the light softly",
+    "A small warm 18K brushed gold tray on a side table, with visible highlights and soft reflections",
+    "A warm brass side table or accent table with a geometric frame, catching natural light with dimensional reflections",
+    "A small brushed gold decorative sculpture or object on a side table, with warm amber tone and specular highlights",
+    "A small antique brass bowl or dish with warm patina placed on a nearby surface, light glinting softly off the rim",
+    "A gold-rimmed glass or decorative object with rich warm tone catching the light, showing depth and dimension",
   ],
 
   /**
@@ -445,10 +472,12 @@ export function getSceneConstants(): {
   flowers: string;
   goldAccent: string;
   wovenTexture: string;
+  livedInDetail: string;
 } {
   return {
     flowers: pickRandom(SCENE_CONSTANTS.freshFlowers),
     goldAccent: pickRandom(SCENE_CONSTANTS.goldAccents),
     wovenTexture: pickRandom(SCENE_CONSTANTS.wovenTextures),
+    livedInDetail: pickRandom(SCENE_VARIATIONS.livedInDetails),
   };
 }

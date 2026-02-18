@@ -64,6 +64,19 @@ GENERATION BOUNDARY:
 `.trim();
 
 /**
+ * Customer Comparison Warning
+ * Reinforces that product fidelity has direct commercial consequences.
+ */
+export const CUSTOMER_COMPARISON_WARNING = `
+CUSTOMER COMPARISON WARNING (HIGHEST PRIORITY):
+- Customers will directly compare this generated image with the actual product they receive.
+- ANY deviation in product color, texture, detail, or proportions will erode trust and increase returns.
+- The product in the generated scene must be INDISTINGUISHABLE from the original product photograph.
+- This is not creative license — this is commercial product representation with legal and brand implications.
+- Treat product fidelity as the single highest priority constraint in the entire generation.
+`.trim();
+
+/**
  * Input Asset Description
  * Tells the model exactly what kind of image it is receiving so it can
  * handle the transparent PNG cutout appropriately.
@@ -83,6 +96,8 @@ INPUT ASSET DESCRIPTION:
 export function formatNegativeReferenceBlock(): string {
   return `
 <identity_constraints>
+${CUSTOMER_COMPARISON_WARNING}
+
 ${INPUT_ASSET_DESCRIPTION}
 
 ${GENERATION_BOUNDARY}
@@ -108,5 +123,6 @@ export function getNegativeReferenceData() {
     noiseConditioning: NOISE_CONDITIONING,
     generationBoundary: GENERATION_BOUNDARY,
     inputAssetDescription: INPUT_ASSET_DESCRIPTION,
+    customerComparisonWarning: CUSTOMER_COMPARISON_WARNING,
   };
 }

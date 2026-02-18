@@ -33,9 +33,11 @@ export const WALL_ART_SCENE = {
       "CRITICAL: This is NOT a three-quarter view, NOT an angled shot, NOT a perspective view with converging lines. Do NOT rotate the camera on any axis. Do NOT position the camera off-center or at any angle to the wall.",
   },
   lighting: {
-    primary: "Soft diffused natural light, 5500K warm neutral daylight",
-    shadows: "Low contrast soft contact shadows from wall art onto the plaster wall",
-    temperature: "5500K warm neutral daylight",
+    primary:
+      "High-key overexposed natural light flooding the scene, 5600K bright neutral daylight",
+    shadows:
+      "Near-invisible contact shadows from wall art onto the plaster wall — barely perceptible, never darker than 15% grey",
+    temperature: "5600K bright neutral daylight",
   },
 } as const;
 
@@ -61,6 +63,7 @@ export function buildWallArtPrompt(): { prompt: string; sceneOptions: SceneOptio
     freshFlowers: constants.flowers,
     goldAccent: constants.goldAccent,
     wovenTexture: constants.wovenTexture,
+    livedInDetail: constants.livedInDetail,
   };
 
   const prompt = `
@@ -103,11 +106,12 @@ MANDATORY SCENE ELEMENTS (must appear in every scene):
 
 WALL ART PLACEMENT & SCALE:
 - The provided wall art image must be mounted on the back wall
-- Scale Constraint: The wall art is a decorative accent; it must occupy no more than 15-20% of the total image width.
-- Proportional Anchoring: The wall art should be approximately 1/4 the width of the sofa positioned directly below it.
+- Scale Constraint: The wall art is a SMALL decorative accent. It must occupy no more than 10-12% of the total image width. It should look like a modest piece of art, NOT a statement piece that dominates the wall.
+- CRITICAL SIZE RULE: Err on the side of TOO SMALL rather than too large. The wall art should feel like a delicate accent, not an oversized statement.
+- Real-world Dimensions: Render the wall art at a realistic decorative scale — approximately 40-50cm (16-20 inches) wide and no taller than 60cm (24 inches / 2 feet). These are small decorative pieces, not gallery-scale canvases.
+- Proportional Anchoring: The wall art should be approximately 1/5 the width of the sofa — noticeably smaller than the sofa back.
 - Vertical Alignment: Position the bottom edge of the wall art approximately 8-12 inches (20-30cm) above eye level, with ample breathing room above the sofa back.
-- Negative Space: Maintain generous empty wall space on all sides of the wall art for a relaxed, airy feel — not a tight gallery arrangement.
-- Real-world Dimensions: Render the wall art at a realistic decorative scale (approximately 40-60cm / 16-24 inches wide).
+- Negative Space: Maintain generous empty wall space on all sides of the wall art for a relaxed, airy feel — not a tight gallery arrangement. The wall art should look small within the large expanse of wall.
 - Render the back wall texture visible through any transparent or alpha regions in the wall art
 
 VISUAL HIERARCHY & COMPOSITION:
@@ -124,6 +128,12 @@ TECHNICAL OPTICS:
 </scene_specification>
 
 <fidelity_instructions>
+PRODUCT FIDELITY IS THE #1 PRIORITY:
+- Above all other instructions, the wall art (Asset_1) must appear exactly as provided.
+- The product's colors, textures, materials, and proportions are SACRED — do not alter them in any way.
+- When in doubt between aesthetic improvement and product accuracy, ALWAYS choose product accuracy.
+- Customers will directly compare this image with the actual product they purchase — any deviation erodes trust.
+
 IDENTITY_LOCK PROTOCOL:
 The wall art image (Asset_1) is a FIXED GEOMETRIC CONSTANT.
 - Do NOT apply style transfer to the wall art
@@ -132,11 +142,27 @@ The wall art image (Asset_1) is a FIXED GEOMETRIC CONSTANT.
 - The AI is the architect for the sofa, rug, and room ONLY
 - The wall art must appear exactly as provided in the input
 
-SHADOW CASTING:
-- Cast soft, realistic contact shadows from the wall art onto the back wall
+LIGHTING OVERRIDE (CRITICAL):
+- The overall image exposure must be high-key: bright, flooded with natural light, almost overexposed.
+- No area of the image should appear dark, moody, or underlit.
+- Shadows must be barely visible — soft, pale, never darker than a light grey.
+- The image should feel like a sun-drenched room at 11am on a bright day with all curtains open.
+- Think editorial interior photography for Domino Magazine or Architectural Digest — bright, clean, aspirational.
 - Light source: ${lightingDirection}
-- Shadow softness should match ${WALL_ART_SCENE.lighting.temperature} natural daylight
-- IMPORTANT: Avoid dark shadows — all shadows must be soft, low-contrast, and gentle
+
+SHADOW CONSISTENCY PROTOCOL:
+- ALL shadows in the scene must follow a single, consistent light source direction matching the lighting above.
+- Shadow characteristics: ultra-soft edges, very low opacity (10-20% grey maximum), wide soft penumbra.
+- Every object that casts a shadow must cast it in the SAME direction with the SAME softness.
+- Contact shadows (where objects meet surfaces) should be barely visible — a subtle darkening, not a hard line.
+- No harsh, dark, or high-contrast shadows anywhere in the scene.
+- Shadow consistency check: if the light comes from the left, ALL shadows fall to the right. No exceptions.
+
+METALLIC RENDERING (CRITICAL):
+- All gold and brass elements must appear warm-toned (18K yellow gold, rich warm brass) — NEVER greenish, olive, or flat.
+- Gold surfaces must show dimensional highlights: soft specular reflections, subtle light catch, and visible micro-texture.
+- Avoid flat matte gold rendering. Even brushed gold should show directional light reflection and surface variation.
+- Gold tone reference: warm amber-gold, like afternoon sunlight on polished brass. NOT cool, NOT green-shifted, NOT flat paint.
 
 ALPHA INTEGRITY:
 - If the wall art has transparent regions, the back wall must be visible through them
@@ -144,19 +170,39 @@ ALPHA INTEGRITY:
 - No artificial glow or halo effects around the wall art edges
 
 SCALE HIERARCHY & DEPTH:
-- Scale Hierarchy: Maintain strict furniture proportions — sofa is the anchor, wall art is the accent.
+- Scale Hierarchy: Maintain strict furniture proportions — sofa is the anchor, wall art is a small accent.
 - Shadow Falloff: Ensure subtle, soft-edged shadows fall opposite the light source direction from the wall art edges to create 3D depth.
 
-CASUAL STYLING DIRECTIVE:
-- The scene must look like a real, lived-in home — not a showroom or catalog set
-- Elements should appear naturally placed, not meticulously arranged
-- Include small imperfections: a throw slightly rumpled, pillows not perfectly symmetrical, flowers casually gathered
-- The overall mood is warm, inviting, and effortlessly elegant
+PLACEMENT REALISM (CRITICAL):
+- Do NOT place any picture frames leaning on the floor, propped against walls, or behind/beside furniture. This looks unrealistic and staged.
+- All decorative objects must be in logical, intentional locations (on tables, shelves, or properly hung on walls).
+- No objects should appear randomly placed on the floor or in transitional spaces.
+- Every item in the scene should look like it belongs there — as if the homeowner placed it with purpose.
+
+LIVED-IN STYLING DIRECTIVE (CRITICAL — read carefully):
+This is NOT a showroom, NOT a catalog set, NOT a staging photo for a real estate listing.
+This is the actual home of a stylish woman in her 30s-40s who just stepped away for a moment.
+
+WHAT "LIVED-IN" LOOKS LIKE:
+- The sofa cushions show gentle body impressions — someone was just sitting there
+- A throw blanket is bunched or pulled to one side, not neatly folded or perfectly draped
+- At least one pillow has fallen or been pushed to the side, slightly off the sofa or squished flat
+- Flowers look 2-3 days old — still beautiful but a few petals have dropped onto the surface below
+- A personal item is visible nearby: an open book, reading glasses, a coffee mug, or a cardigan
+- Nothing is perfectly centered or symmetrically arranged — asymmetry is key
+- Lived-in detail: ${constants.livedInDetail}
+
+WHAT IT IS NOT:
+- Not "catalog messy" where one item is 2 degrees off-angle and everything else is perfect
+- Not dirty, cluttered, or chaotic — it's beautiful disorder
+- Not overly styled with identical spacing between objects
+- Think: a behind-the-scenes photo from an Anthropologie or Jenni Kayne catalog shoot, between setups when the stylist stepped away and real life crept in
 
 OUTPUT:
 Generate a photorealistic lifestyle scene featuring the provided wall art as the immutable focal point.
-The scene should feel warm, casually elegant, and lived-in — like a beautiful home someone actually lives in.
-Consistent with high-end interior photography but with a relaxed, unstaged quality.
+The scene must be BRIGHT and HIGH-KEY — flooded with natural light, almost overexposed.
+The scene must look GENUINELY LIVED-IN — beautiful disorder, not catalog perfection. Shabby chic yet tailored.
+Consistent with high-end editorial interior photography — bright, aspirational, but with the unstaged warmth of a real home.
 </fidelity_instructions>
 `.trim();
 
