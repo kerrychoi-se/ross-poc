@@ -8,6 +8,7 @@ import { ResultDisplay } from "@/components/ResultDisplay";
 import { removeBackground, generateHeadOnView, generateThreeQuarterView } from "@/lib/api-client";
 import type { SceneOptions } from "@/lib/prompts/style-system";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 type ProductType = "wall-art" | "shelf" | null;
 type AppState = "select-type" | "upload" | "processing" | "result";
@@ -118,6 +119,12 @@ export default function Home() {
             <p className="text-jasper-gray text-lg">
               Transform product images into stunning lifestyle scenes
             </p>
+            <Link
+              href="/ab-test"
+              className="inline-block mt-4 text-sm text-jasper-coral hover:underline font-medium"
+            >
+              Run A/B Test &rarr;
+            </Link>
           </header>
         </div>
       </div>
