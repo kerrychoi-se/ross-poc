@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RefreshCw, ArrowLeftRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, RefreshCw, ArrowLeftRight, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import type { SceneOptions } from "@/lib/prompts/style-system";
 
 interface ResultDisplayProps {
@@ -12,9 +12,10 @@ interface ResultDisplayProps {
   onRegenerateThreeQuarter: () => void;
   isRegenerating: boolean;
   sceneOptions?: SceneOptions | null;
+  onBackToVariants?: () => void;
 }
 
-export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating, sceneOptions }: ResultDisplayProps) {
+export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating, sceneOptions, onBackToVariants }: ResultDisplayProps) {
   const [showComparison, setShowComparison] = useState(false);
   const [showSceneOptions, setShowSceneOptions] = useState(false);
 
@@ -201,6 +202,16 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
 
       {/* Action Buttons */}
       <div className="flex flex-wrap items-center justify-center gap-4">
+        {onBackToVariants && (
+          <button
+            onClick={onBackToVariants}
+            className="btn-jasper-secondary flex items-center gap-2"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Choose Different Image
+          </button>
+        )}
+
         <button
           onClick={() => setShowComparison(!showComparison)}
           className="btn-jasper-secondary flex items-center gap-2"

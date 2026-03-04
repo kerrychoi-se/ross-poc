@@ -1,10 +1,11 @@
 "use client";
 
-import { Eraser, Wand2, Camera, CheckCircle2, Loader2 } from "lucide-react";
+import { Eraser, Wand2, CheckCircle2, Loader2 } from "lucide-react";
 
 interface ProcessingStepProps {
-  currentStep: "removing-background" | "generating-view" | "generating-three-quarter";
+  currentStep: "removing-background" | "generating-variants";
   progress: number;
+  variantsCompleted?: number;
 }
 
 const steps = [
@@ -15,20 +16,14 @@ const steps = [
     icon: Eraser,
   },
   {
-    id: "generating-view",
-    label: "Generating Head-On View",
-    description: "Using Gemini AI to create a head-on perspective",
+    id: "generating-variants",
+    label: "Generating 4 Variants",
+    description: "Creating A-D prompt variants with Gemini AI",
     icon: Wand2,
-  },
-  {
-    id: "generating-three-quarter",
-    label: "Generating 3/4 Angle View",
-    description: "Using Gemini AI to create a 3/4 perspective",
-    icon: Camera,
   },
 ];
 
-export function ProcessingStep({ currentStep, progress }: ProcessingStepProps) {
+export function ProcessingStep({ currentStep, progress, variantsCompleted }: ProcessingStepProps) {
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
 
   return (
@@ -48,6 +43,11 @@ export function ProcessingStep({ currentStep, progress }: ProcessingStepProps) {
           const isActive = step.id === currentStep;
           const isComplete = index < currentStepIndex || (isActive && progress === 100);
           const isPending = index > currentStepIndex;
+
+          let description = step.description;
+          if (isActive && step.id === "generating-variants" && variantsCompleted !== undefined) {
+            description = `${variantsCompleted} of 4 variants complete`;
+          }
 
           return (
             <div
@@ -103,7 +103,7 @@ export function ProcessingStep({ currentStep, progress }: ProcessingStepProps) {
                       : "text-jasper-gray"
                   }`}
                 >
-                  {step.description}
+                  {description}
                 </p>
 
                 {isActive && (

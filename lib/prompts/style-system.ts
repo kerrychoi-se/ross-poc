@@ -10,17 +10,17 @@ export const AESTHETIC_DNA = {
   aesthetic:
     "Maison Home Casual Luxury — aspirational yet lived-in, shabby chic yet tailored. For a modern working woman with taste and disposable income. Think bright Parisian apartment meets California light.",
 
-  // Lighting specification — HIGH-KEY FLOODED LOOK
+  // Lighting specification — BRIGHT DIRECTIONAL SIDE-LIGHTING
   lighting: {
     primary:
-      "High-key overexposed natural light flooding the entire scene, 5600K bright neutral daylight — the room should feel drenched in light",
+      "Bright, directional side-lighting (approximately 45-degree angle) that floods the room but creates soft, defined shadows to reveal form and texture",
     quality:
-      "Extremely bright and airy, diffused through sheer white linen, every surface washed in soft white light with almost no dark areas",
+      "Bright and airy, diffused through sheer white linen, with soft specular reflections and dimension on metallic elements, revealing micro-texture of wall plaster and sofa fabric",
     temperature: "5600K bright neutral daylight with slight warm bias",
     shadows:
-      "Near-invisible shadows — extremely low contrast, barely perceptible, never darker than 15% grey. No dark shadows anywhere in the scene.",
+      "Soft, defined shadows that reveal form and texture — natural shadow falloff that grounds objects in the space without becoming harsh",
     exposure:
-      "+1.5 to +2.0 EV overexposure — whites should bloom slightly, mid-tones pushed bright, no muddy or dark areas anywhere",
+      "Sun-drenched but dimensional, not blown out — the room should feel flooded with natural light while maintaining depth and surface detail",
   },
 
   // Color palette
@@ -74,6 +74,12 @@ export const AESTHETIC_DNA = {
     width: "Wide planks for modern aesthetic",
   },
 
+  // PBR rendering constraint
+  rendering: {
+    constraint:
+      "Physically Based Rendering (PBR): Bright directional lighting REVEALS surface micro-texture, it does not erase it. Surface structure (roughness, bump, grain) must remain visible across all areas. The interplay of light and soft shadow is what makes surfaces feel real — plaster grain, wood texture, and fabric weave must all be legible.",
+  },
+
   // Camera and composition
   composition: {
     lens: "35mm environmental, rectilinear projection",
@@ -88,68 +94,6 @@ export const AESTHETIC_DNA = {
       "Aspirational but approachable — a beautiful home that feels real and lived-in. Shabby chic elegance with tailored details. Not a showroom, not rustic farmhouse. The home of a stylish woman who entertains effortlessly.",
   },
 } as const;
-
-/**
- * Format aesthetic DNA as XML for inclusion in prompts
- */
-export function formatAestheticDNA(): string {
-  return `<aesthetic_dna>
-  <style>${AESTHETIC_DNA.aesthetic}</style>
-  
-  <lighting>
-    <primary>${AESTHETIC_DNA.lighting.primary}</primary>
-    <quality>${AESTHETIC_DNA.lighting.quality}</quality>
-    <temperature>${AESTHETIC_DNA.lighting.temperature}</temperature>
-    <shadows>${AESTHETIC_DNA.lighting.shadows}</shadows>
-    <exposure>${AESTHETIC_DNA.lighting.exposure}</exposure>
-  </lighting>
-  
-  <palette>
-    <primary>${AESTHETIC_DNA.palette.primary.join(", ")}</primary>
-    <accents>${AESTHETIC_DNA.palette.accents.join(", ")}</accents>
-    <luxury_touches>${AESTHETIC_DNA.palette.luxuryTouches.join(", ")}</luxury_touches>
-    <neutrals>${AESTHETIC_DNA.palette.neutrals.join(", ")}</neutrals>
-  </palette>
-  
-  <materials>
-    <fabrics>${AESTHETIC_DNA.materials.fabrics.join(", ")}</fabrics>
-    <woods>${AESTHETIC_DNA.materials.woods.join(", ")}</woods>
-    <ceramics>${AESTHETIC_DNA.materials.ceramics.join(", ")}</ceramics>
-    <metallics>${AESTHETIC_DNA.materials.metallics.join(", ")}</metallics>
-    <woven_accents>${AESTHETIC_DNA.materials.wovenAccents.join(", ")}</woven_accents>
-  </materials>
-  
-  <composition>
-    <lens>${AESTHETIC_DNA.composition.lens}</lens>
-    <aperture>${AESTHETIC_DNA.composition.aperture}</aperture>
-    <viewpoint>${AESTHETIC_DNA.composition.viewpoint}</viewpoint>
-    <camera_parameters>${AESTHETIC_DNA.composition.cameraParameters}</camera_parameters>
-    <geometric_rules>${AESTHETIC_DNA.composition.geometricRules}</geometric_rules>
-    <style>${AESTHETIC_DNA.composition.style}</style>
-  </composition>
-</aesthetic_dna>`;
-}
-
-/**
- * Get surface configuration for a specific product type
- */
-export function getSurfaceConfig(productType: "wall-art" | "shelf") {
-  return AESTHETIC_DNA.surfaces[productType];
-}
-
-/**
- * Get lighting configuration
- */
-export function getLightingConfig() {
-  return AESTHETIC_DNA.lighting;
-}
-
-/**
- * Get material palette for scene generation
- */
-export function getMaterialPalette() {
-  return AESTHETIC_DNA.materials;
-}
 
 // ---------------------------------------------------------------------------
 // Scene Options — metadata returned alongside the prompt so the UI can
@@ -180,6 +124,17 @@ export function pickRandom<T>(arr: readonly T[]): T {
 }
 
 /**
+ * A wall or floor variation with its PBR texture description.
+ * The `description` is used in the scene specification; the `pbrTexture`
+ * is injected into the dynamic material rendering block so the AI only
+ * receives texture guidance for the materials actually selected.
+ */
+export interface MaterialVariation {
+  description: string;
+  pbrTexture: string;
+}
+
+/**
  * A single prop item for shelf styling
  */
 export interface ShelfProp {
@@ -206,52 +161,91 @@ export const SCENE_VARIATIONS = {
    * Each generation randomly selects one option to avoid repetitive compositions.
    */
   lightingDirections: [
-    "Flooded high-key window light from camera-left, overexposed +1.5 EV, 10am bright morning sun, near-invisible pale shadows, entire room drenched in white light.",
-    "Bright overexposed natural light from camera-left at a 30-degree angle, midday sun flooding through large windows, high-key with luminous warm-white highlights, shadows barely perceptible.",
-    "Flooded diffused light from camera-right, wrap-around brightness filling every corner, bright clear day, near-zero shadows, pristine white airy aesthetic.",
-    "Brilliant natural light pouring from an unseen side window, light gradients washed bright across all surfaces, 11am clear sky, flooded high-key exposure, no dark areas anywhere.",
-    "Bright even natural light from camera-left flooding the room, every surface bathed in soft white luminosity, diffused morning sun, ethereal bright atmosphere, shadows barely a whisper.",
-    "Intense overhead diffused daylight flooding from skylights, overexposed high-key, zero shadows, perfectly even white light distribution, pristine sun-drenched aesthetic.",
-    "Bright frontal diffused natural light from behind the camera, flooded flat lighting, high-key overexposure, emphasizing textures and materials in brilliant white light, no shadows deeper than 10% grey.",
+    "Bright directional window light from camera-left at a 45-degree angle, 10am morning sun flooding the room, creating soft defined shadows that reveal wall texture and furniture form. Sun-drenched but dimensional.",
+    "Warm directional natural light from camera-left at a 40-degree angle, midday sun streaming through large windows, soft specular highlights on metallic surfaces, gentle shadow falloff grounding objects in the space.",
+    "Bright side-lighting from camera-right at a 45-degree angle, clear day light filling the room with soft defined shadows falling to the left, revealing plaster texture and fabric weave. Dimensional and airy.",
+    "Natural directional light pouring from a side window at a 45-degree angle, 11am clear sky, light flooding the room while casting soft shadows that give depth to furniture and architectural details.",
+    "Bright directional morning light from camera-left at a 50-degree angle, diffused through sheer curtains, creating gentle shadow gradients across wall surfaces, revealing micro-texture on plaster and wood grain.",
+    "Warm directional daylight from a high side window at a 45-degree angle, flooding the room with brightness while soft shadows beneath furniture and along wall edges give the space three-dimensional depth.",
+    "Bright natural side-light from camera-right at a 45-degree angle, emphasizing textures and materials through the interplay of light and soft shadow, sun-drenched atmosphere with clear dimensional depth.",
   ],
 
   /**
    * Wall Bank -- Texture & Architecture
    */
   walls: [
-    "Soft 'Swiss Coffee' limewash plaster with subtle movement and matte texture, bright and luminous",
-    "Classic Parisian-style wainscoting with picture frame molding in a crisp 'All White' finish, catching the light beautifully",
-    "Slim-profile vertical micro-shiplap paneling in bright white for a relaxed, modern cottage feel",
-    "Bright limewash Roman clay in warm white with soft tonal variation, sun-washed and luminous",
-    "Clean gallery-white walls with subtle hand-troweled plaster texture, reflecting abundant natural light",
-    "Minimalist white walls with a smooth matte plaster finish, bright and airy",
-  ],
+    {
+      description: "Soft 'Swiss Coffee' limewash plaster with subtle movement and matte texture, bright and luminous",
+      pbrTexture: "visible trowel marks, subtle lime wash tonal variation, organic grain in the plaster surface — NOT a flat digital color fill",
+    },
+    {
+      description: "Classic Parisian-style wainscoting with picture frame molding in a crisp 'All White' finish, catching the light beautifully",
+      pbrTexture: "visible wood grain in molding profiles, subtle paint brush texture on panel faces, light catching raised edges of the molding",
+    },
+    {
+      description: "Slim-profile vertical micro-shiplap paneling in bright white for a relaxed, modern cottage feel",
+      pbrTexture: "visible wood grain running through each slat, subtle shadow lines between panels, paint texture on the surface",
+    },
+    {
+      description: "Bright limewash Roman clay in warm white with soft tonal variation, sun-washed and luminous",
+      pbrTexture: "hand-applied clay texture with tonal variation, visible application strokes, subtle surface undulation",
+    },
+    {
+      description: "Clean gallery-white walls with subtle hand-troweled plaster texture, reflecting abundant natural light",
+      pbrTexture: "hand-troweled plaster ridges and valleys, subtle directional texture from application, micro-shadows in surface irregularities",
+    },
+    {
+      description: "Minimalist white walls with a smooth matte plaster finish, bright and airy",
+      pbrTexture: "fine matte plaster grain, subtle surface porosity, micro-texture visible in raking light",
+    },
+  ] as const satisfies readonly MaterialVariation[],
 
   /**
    * Floor Bank -- Foundation & Warmth
    */
   floors: [
-    "Wide-plank white oak with matte finish, ultra-light blonde with minimal knots, bright and clean",
-    "Bleached oak herringbone parquet in a tight pattern for a bright European touch",
-    "Pale cream limestone tiles with barely visible veining, luminous and light-reflecting",
-    "Large chunky-knit natural jute rug in a light sand tone covering 80% of the floor space",
-    "Large-format honed light travertine tiles with soft blurred grout lines, sun-washed appearance",
-    "Ultra-light whitewashed wide-plank oak with a soft matte sheen, bright Scandinavian feel",
-    "Tight-knit sisal flooring in a pale sand-colored hue, light and natural",
-  ],
+    {
+      description: "Wide-plank white oak with matte finish, ultra-light blonde with minimal knots, bright and clean",
+      pbrTexture: "individual grain lines per plank, subtle color variation between planks, matte surface with visible wood fiber texture",
+    },
+    {
+      description: "Bleached oak herringbone parquet in a tight pattern for a bright European touch",
+      pbrTexture: "grain direction change at each herringbone joint, subtle sheen variation between parquet blocks, visible wood pore texture",
+    },
+    {
+      description: "Pale cream limestone tiles with barely visible veining, luminous and light-reflecting",
+      pbrTexture: "subtle natural stone veining, micro-fossil texture, slight surface porosity, soft honed finish with visible mineral variation",
+    },
+    {
+      description: "Large chunky-knit natural jute rug in a light sand tone covering 80% of the floor space",
+      pbrTexture: "visible jute fiber weave pattern, individual fiber strands catching light, tactile chunky-knit texture with depth between rows",
+    },
+    {
+      description: "Large-format honed light travertine tiles with soft blurred grout lines, sun-washed appearance",
+      pbrTexture: "natural travertine pitting and fill marks, subtle tonal banding, honed surface with visible mineral texture",
+    },
+    {
+      description: "Ultra-light whitewashed wide-plank oak with a soft matte sheen, bright Scandinavian feel",
+      pbrTexture: "whitewash letting underlying grain show through, subtle plank-to-plank tone variation, visible wood fiber texture",
+    },
+    {
+      description: "Tight-knit sisal flooring in a pale sand-colored hue, light and natural",
+      pbrTexture: "visible sisal fiber weave pattern, natural fiber color variation, tactile woven texture with micro-shadows between fibers",
+    },
+  ] as const satisfies readonly MaterialVariation[],
 
   /**
    * Sofa Bank -- Form & Comfort
    * Each entry is a complete sentence describing placement relative to the shelf.
    */
   sofas: [
-    "A low-profile oversized slipcovered linen 'Cloud' sectional in Optic White, positioned beneath the shelf. The seat cushions show soft body impressions where someone was just sitting. A cream throw is bunched up in one corner rather than neatly draped. Mismatched pillows in dusty blue and oatmeal are squished against the arm — one has slipped halfway off onto the cushion edge.",
-    "A sculptural kidney-bean shaped curved sofa in heavy cream bouclé, placed beneath the shelf. A lightweight knit blanket has been pulled to one side and is half-sliding off the seat. A couple of soft grey linen pillows are stacked unevenly, one dented from being leaned against. The cushions show a gentle impression of recent use.",
-    "A high-arm deep-seated tuxedo sofa with square tufting in an oatmeal wool blend, centered below the shelf. A chunky cream wool throw is bunched into a nest in one corner as if someone was curled up reading. Pillows in muted slate and warm white are pushed to the sides — one has fallen against the arm at an angle, another is slightly squished flat.",
-    "A structured yet soft Belgium track-arm sofa with thin track arms and down-filled cushions, positioned beneath the shelf. A linen throw blanket is tangled loosely across the seat, trailing over one arm. A few soft blue-grey accent pillows are scattered unevenly — one propped upright, one lying flat, one pushed into the corner. The down cushions show soft sitting impressions.",
-    "A 'deconstructed' sofa with a light oak frame, exposed linen-wrapped cushions, and leather straps, resting below the shelf. A waffle-weave throw is half-pulled off the arm, one end pooling slightly. Natural linen pillows are askew — one flopped on its side, another wedged into the corner. The seat cushion fabric is gently rumpled from use.",
-    "A blocky modular piped-linen sectional with prominent seams in Greige, arranged beneath the shelf. A lightweight cream blanket is bunched and twisted across one cushion as if someone pushed it aside when standing up. Soft oatmeal and dusty blue throw pillows are scattered in a loose cluster — not lined up, not evenly spaced. One pillow sits on the floor beside the sofa where it tumbled.",
-    "A modern camelback sofa with a slight soft curve to the backrest and cylindrical bolster pillows, placed below the shelf. A cashmere-blend throw in warm white is bunched up against one arm, half-draped and half-fallen. A couple of pillows are stacked unevenly against the opposite arm, and a coffee-table book lies open face-down on the middle cushion. The seat shows soft impressions from someone who was just sitting there.",
+    "A slipcovered English roll-arm sofa in washed white linen with a gently rumpled slipcover, positioned beneath the shelf. The deep seat cushions show soft body impressions where someone was just sitting. A cream cashmere throw is bunched up in one corner rather than neatly draped. Mismatched pillows in dusty blue and oatmeal are squished against the rolled arms — one has slipped halfway off onto the cushion edge.",
+    "A classic Lawson sofa with a tailored linen skirt in soft oatmeal, clean square arms and plush back cushions, placed beneath the shelf. A lightweight knit blanket has been pulled to one side and is half-sliding off the seat. A couple of soft grey linen pillows are stacked unevenly, one dented from being leaned against. The cushions show a gentle impression of recent use.",
+    "A relaxed transitional linen sofa with plush down back-cushions in warm cream, soft slope arms and a kick-pleat skirt, centered below the shelf. A chunky cream wool throw is bunched into a nest in one corner as if someone was curled up reading. Pillows in muted slate and warm white are pushed to the sides — one has fallen against the arm at an angle, another is slightly squished flat.",
+    "A deep-seated slipcovered sofa with rolled arms and a casual linen slipcover in natural flax, positioned beneath the shelf. A linen throw blanket is tangled loosely across the seat, trailing over one arm. A few soft blue-grey accent pillows are scattered unevenly — one propped upright, one lying flat, one pushed into the corner. The down cushions show soft sitting impressions.",
+    "A classic English roll-arm sofa with turned wooden feet and Belgian linen upholstery in a soft cream tone, resting below the shelf. A waffle-weave throw is half-pulled off the arm, one end pooling slightly. Natural linen pillows are askew — one flopped on its side, another wedged into the corner. The seat cushion fabric is gently rumpled from use.",
+    "A low-profile slipcovered linen sectional in Optic White with deep comfortable cushions and a relaxed tailored slipcover, arranged beneath the shelf. A lightweight cream blanket is bunched and twisted across one cushion as if someone pushed it aside when standing up. Soft oatmeal and dusty blue throw pillows are scattered in a loose cluster — not lined up, not evenly spaced. One pillow sits on the floor beside the sofa where it tumbled.",
+    "A classic Bridgewater sofa with soft rolled arms, a T-cushion seat, and a tailored linen slipcover in warm white, placed below the shelf. A cashmere-blend throw in warm white is bunched up against one arm, half-draped and half-fallen. A couple of pillows are stacked unevenly against the opposite arm, and a coffee-table book lies open face-down on the middle cushion. The seat shows soft impressions from someone who was just sitting there.",
   ],
 
   /**

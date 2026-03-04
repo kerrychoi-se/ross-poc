@@ -3,42 +3,41 @@ import { buildWallArtPrompt } from "@/lib/prompts/wall-art-prompt";
 import { buildShelfPrompt } from "@/lib/prompts/shelf-prompt";
 import { buildMediumPrompt } from "@/lib/prompts/medium-prompt";
 import { getReferenceImagePartsForProductType } from "@/lib/references";
+import type { SceneOptions } from "@/lib/prompts/style-system";
 
 type ProductType = "wall-art" | "shelf";
-type Variant = "A" | "B" | "C" | "D" | "E" | "F";
+type Variant = "A" | "B" | "C" | "D";
 type PromptLength = "medium" | "long";
-type ModelId = "gemini-3.1-flash-image-preview" | "gemini-3-pro-image-preview";
 
 interface VariantConfig {
   promptLength: PromptLength;
   includeReferences: boolean;
   label: string;
-  model: ModelId;
 }
 
+const MODEL = "gemini-3-pro-image-preview";
+
 const VARIANT_MAP: Record<Variant, VariantConfig> = {
-  A: { promptLength: "long",   includeReferences: false, model: "gemini-3.1-flash-image-preview", label: "Long prompt, no refs (Nano Banana 2)" },
-  B: { promptLength: "long",   includeReferences: true,  model: "gemini-3.1-flash-image-preview", label: "Long prompt + refs (Nano Banana 2)" },
-  C: { promptLength: "medium", includeReferences: false, model: "gemini-3-pro-image-preview",     label: "Medium prompt, no refs (Pro)" },
-  D: { promptLength: "medium", includeReferences: true,  model: "gemini-3-pro-image-preview",     label: "Medium prompt + refs (Pro)" },
-  E: { promptLength: "long",   includeReferences: false, model: "gemini-3-pro-image-preview",     label: "Long prompt, no refs (Pro)" },
-  F: { promptLength: "long",   includeReferences: true,  model: "gemini-3-pro-image-preview",     label: "Long prompt + refs (Pro)" },
+  A: { promptLength: "medium", includeReferences: false, label: "Medium prompt, no refs (Pro)" },
+  B: { promptLength: "medium", includeReferences: true,  label: "Medium prompt + refs (Pro)" },
+  C: { promptLength: "long",   includeReferences: false, label: "Long prompt, no refs (Pro)" },
+  D: { promptLength: "long",   includeReferences: true,  label: "Long prompt + refs (Pro)" },
 };
 
 function getPromptForVariant(
   variant: Variant,
   productType: ProductType
-): { prompt: string; wordCount: number } {
+): { prompt: string; wordCount: number; sceneOptions: SceneOptions } {
   const config = VARIANT_MAP[variant];
 
   if (config.promptLength === "medium") {
     return buildMediumPrompt(productType);
   }
 
-  const { prompt } =
+  const { prompt, sceneOptions } =
     productType === "wall-art" ? buildWallArtPrompt() : buildShelfPrompt();
   const wordCount = prompt.split(/\s+/).length;
-  return { prompt, wordCount };
+  return { prompt, wordCount, sceneOptions };
 }
 
 export async function POST(request: NextRequest) {
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
     if (!variant || !VARIANT_MAP[variant as Variant]) {
       return NextResponse.json(
-        { error: "Invalid variant. Must be 'A', 'B', 'C', 'D', 'E', or 'F'" },
+        { error: "Invalid variant. Must be 'A', 'B', 'C', or 'D'" },
         { status: 400 }
       );
     }
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     const typedVariant = variant as Variant;
     const config = VARIANT_MAP[typedVariant];
-    const { prompt, wordCount } = getPromptForVariant(typedVariant, productType);
+    const { prompt, wordCount, sceneOptions } = getPromptForVariant(typedVariant, productType);
 
     const contentParts: Array<
       | { text: string }
@@ -110,26 +109,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${config.model}:generateContent?key=${apiKey}`;
-
-    const isNanoBanana2 = config.model === "gemini-3.1-flash-image-preview";
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`;
 
     const payload: Record<string, unknown> = {
       contents: [{ parts: contentParts }],
       generationConfig: {
         responseModalities: ["TEXT", "IMAGE"],
         imageConfig: { aspectRatio, imageSize },
-        ...(isNanoBanana2 && {
-          thinkingConfig: { thinkingLevel: "High", includeThoughts: false },
-        }),
       },
-      ...(isNanoBanana2 && {
-        tools: [{ google_search: { searchTypes: { webSearch: {}, imageSearch: {} } } }],
-      }),
     };
 
     console.log(
-      `[generate-ab-test] Variant ${typedVariant} (${config.label}) | ${config.model} | ${productType} | ${wordCount} words | refs: ${config.includeReferences}`
+      `[generate-ab-test] Variant ${typedVariant} (${config.label}) | ${MODEL} | ${productType} | ${wordCount} words | refs: ${config.includeReferences}`
     );
 
     const response = await fetch(endpoint, {
@@ -192,6 +183,7 @@ export async function POST(request: NextRequest) {
       variant: typedVariant,
       wordCount,
       label: config.label,
+      sceneOptions,
     });
   } catch (error) {
     console.error("[generate-ab-test] Error:", error);

@@ -1,10 +1,11 @@
 /**
  * Three-Quarter Angle Prompt Builder
  *
- * Generates lean, perspective-focused prompts to re-render a head-on lifestyle
- * scene from a 3/4 angle. The head-on image is the sole reference — it already
- * encodes the full aesthetic (materials, lighting, palette) so the prompt only
- * needs to describe the camera change and reinforce depth cues.
+ * Generates narrative, perspective-focused prompts to produce a 3/4 angle
+ * photograph of the same room shown in a head-on reference image.
+ * Uses Google's recommended narrative style over bullet-point lists to
+ * maximize the model's language understanding and prevent it from
+ * anchoring too heavily on the frontal reference composition.
  */
 
 /**
@@ -12,34 +13,35 @@
  */
 function buildWallArtThreeQuarterPrompt(): string {
   return `
-TASK: Re-render the provided reference image from a 3/4 camera angle.
+A photorealistic 3/4 perspective interior photograph of the exact same room shown in the reference image. The photographer has moved to a relaxed, flattering 45-degree angle (to the left or right), capturing a natural lifestyle shot at eye level with a 35mm lens. 
 
-CAMERA:
-- Reposition the camera approximately 45 degrees to the side of the original head-on position
-- Eye-level height, 35mm lens
-- The image must show clear perspective: converging lines on walls and floor, foreshortening on the wall art, visible depth between foreground and background
+Wall lines and floor planks converge naturally toward a vanishing point off-center. The sofa beautifully reveals its arm and side profile, and the wall art appears properly foreshortened in 3D space. Do not push the camera into an extreme corner or use an aggressive wide-angle lens. The perspective shift should feel elegant, inviting, and strictly adhere to a moderate 45-degree rotation, avoiding any distorted "real estate" corner-shot look.
 
-PRESERVE FROM REFERENCE:
-- Same room, same furniture, same wall art, same materials and colors
-- Same lighting direction and warmth
-- Same casual, lived-in styling (draped throws, tossed pillows, natural arrangements)
-- Same high-key, bright, flooded-with-light exposure — the 3/4 view must be just as bright and airy as the head-on view
+The wall art must remain small — a delicate accent piece surrounded by generous negative space on the wall, not an oversized statement piece. It should cast a soft ambient occlusion shadow onto the adjacent wall surface, which becomes even more visible from this oblique angle.
 
-LIGHTING & SHADOW CONSISTENCY (CRITICAL):
-- Maintain the same high-key overexposed brightness from the reference image — do NOT darken the scene for the new angle.
-- All shadows must remain ultra-soft, barely visible, consistent direction, never darker than 15% grey.
-- Gold and brass elements must remain warm-toned with dimensional highlights — no greenish or flat rendering.
-- The product (wall art) must remain pixel-accurate with no modifications to color, texture, or detail.
+Everything else — the room's furniture, materials, color palette, lighting warmth and direction, and sun-drenched airy atmosphere — should match the reference image naturally. The reference image already encodes the full aesthetic; simply photograph the same bright, beautiful space from the new angle.
 
-DEPTH CUES (important):
-- Floor planks or tiles must converge toward a vanishing point
-- The side wall should be visible, receding into depth
-- The sofa should show its side profile and arm structure
-- The wall art should appear foreshortened — narrower on the far side
-- Objects closer to the camera should appear larger than those further away
-- The room corner or adjacent wall may become visible from this angle
+REFERENCE IMAGE DECOUPLING:
+The provided reference image is strictly a source of stylistic DNA — use it only to extract furniture identity, lighting quality, color palette, and textures. Entirely discard the flat camera angle, orthogonal perspective, and 2D composition of the reference image. Do not inherit or reproduce the reference image's geometry in any way.
 
-OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It must be just as BRIGHT and HIGH-KEY as the reference — flooded with natural light, almost overexposed. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
+MANDATORY PERSPECTIVE WARP:
+The wall art MUST NOT face the camera flatly. It must be mathematically mapped onto the receded plane of the angled back wall. Apply accurate foreshortening, perspective skew, and scale recession to the wall art so that its edges converge perfectly with the vanishing points of the room's architecture. If the wall art appears as a flat rectangle facing the viewer, the perspective warp has failed.
+
+3D DEPTH AND EDGE GENERATION:
+Generate realistic 3D edge thickness on the wall art — metal returns, rims, or canvas edges must be visible on the side of the product closest to the camera. The wall art must appear as a physical object with weight and volume mounted on the wall, not a paper-thin digital decal pasted onto a flat surface.
+
+ANGLED SHADOW PHYSICS:
+Generate accurate ambient occlusion and directional drop-shadows behind the wall art. Shadows must stretch away from the light source and track correctly along the receded 3D perspective plane of the angled wall. The shadow shape must reflect the oblique viewing angle, not a frontal projection.
+
+CAMERA POSITION & ANGLE (CRITICAL):
+- This is a natural 45-degree 3/4 perspective viewpoint.
+- The camera is positioned moderately to the left or right of the room's center axis, looking inward so the back wall recedes naturally.
+- DO NOT use an extreme wide-angle distortion, and DO NOT push the camera deep into a corner. Keep the perspective elegant, relaxed, and grounded.
+
+SCENE COMPOSITION FREEZE (CRITICAL):
+- The position of every piece of furniture, rug, lighting fixture, and decor object is STRICTLY LOCKED to its location in the reference image.
+- You may NOT move, remove, re-arrange, or add any objects. If there is a coffee table in the reference, it MUST remain in that exact spot.
+- The room itself is a frozen statue; your ONLY task is to move the camera around it.
 `.trim();
 }
 
@@ -48,35 +50,35 @@ OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It
  */
 function buildShelfThreeQuarterPrompt(): string {
   return `
-TASK: Re-render the provided reference image from a 3/4 camera angle.
+A photorealistic 3/4 perspective interior photograph of the exact same room shown in the reference image. The photographer has moved to a relaxed, flattering 45-degree angle (to the left or right), capturing a natural lifestyle shot at eye level with a 35mm lens. 
 
-CAMERA:
-- Reposition the camera approximately 45 degrees to the side of the original head-on position
-- Eye-level height, 35mm lens
-- The image must show clear perspective: converging lines on walls and floor, foreshortening on the shelf, visible depth between foreground and background
+Wall lines and floor planks converge naturally toward a vanishing point off-center. The sofa beautifully reveals its arm and side profile, and the shelf appears properly foreshortened in 3D space. Do not push the camera into an extreme corner or use an aggressive wide-angle lens. The perspective shift should feel elegant, inviting, and strictly adhere to a moderate 45-degree rotation, avoiding any distorted "real estate" corner-shot look.
 
-PRESERVE FROM REFERENCE:
-- Same room, same furniture, same shelf, same decorative props, same materials and colors
-- Same lighting direction and warmth
-- Same casual, lived-in styling (draped throws, tossed pillows, natural arrangements)
-- Same high-key, bright, flooded-with-light exposure — the 3/4 view must be just as bright and airy as the head-on view
+The shelf should cast a soft ambient occlusion shadow onto the adjacent wall surface, which becomes even more visible from this oblique angle.
 
-LIGHTING & SHADOW CONSISTENCY (CRITICAL):
-- Maintain the same high-key overexposed brightness from the reference image — do NOT darken the scene for the new angle.
-- All shadows must remain ultra-soft, barely visible, consistent direction, never darker than 15% grey.
-- Gold and brass elements must remain warm-toned with dimensional highlights — no greenish or flat rendering.
-- The product (shelf) must remain pixel-accurate with no modifications to color, texture, or detail.
+Everything else — the room's furniture, decorative props, materials, color palette, lighting warmth and direction, and sun-drenched airy atmosphere — should match the reference image naturally. The reference image already encodes the full aesthetic; simply photograph the same bright, beautiful space from the new angle.
 
-DEPTH CUES (important):
-- Floor planks or tiles must converge toward a vanishing point
-- The side wall should be visible, receding into depth
-- The shelf should show its depth, thickness, and side profile
-- Props on the shelf should reveal their three-dimensional form from this angle
-- The sofa should show its side profile, arm structure, and depth
-- Objects closer to the camera should appear larger than those further away
-- The room corner or adjacent wall may become visible from this angle
+REFERENCE IMAGE DECOUPLING:
+The provided reference image is strictly a source of stylistic DNA — use it only to extract furniture identity, lighting quality, color palette, and textures. Entirely discard the flat camera angle, orthogonal perspective, and 2D composition of the reference image. Do not inherit or reproduce the reference image's geometry in any way.
 
-OUTPUT: A photorealistic photograph of the same room, taken from a 3/4 angle. It must be just as BRIGHT and HIGH-KEY as the reference — flooded with natural light, almost overexposed. It should feel like a second photograph taken in the same room by moving the camera 45 degrees to the side.
+MANDATORY PERSPECTIVE WARP:
+The shelf MUST NOT face the camera flatly. It must be mathematically mapped onto the receded plane of the angled back wall, showing true depth and convergence with the room's architectural vanishing points. Apply accurate foreshortening, perspective skew, and scale recession so that the shelf recedes along the wall plane. If the shelf appears as a flat horizontal line with no depth, the perspective warp has failed.
+
+3D DEPTH AND EDGE GENERATION:
+The shelf must show its full physical depth, bracket mounting or support structure, and side edge on the side closest to the camera. Props on the shelf must reveal their three-dimensional form — they are physical objects with volume, not flat cutouts pasted onto a surface. Generate realistic edge thickness and dimensional detail throughout.
+
+ANGLED SHADOW PHYSICS:
+Generate accurate ambient occlusion and directional drop-shadows behind and beneath the shelf. Shadows must stretch away from the light source and track correctly along the receded 3D perspective plane of the angled wall. The shadow shape must reflect the oblique viewing angle, not a frontal projection.
+
+CAMERA POSITION & ANGLE (CRITICAL):
+- This is a natural 45-degree 3/4 perspective viewpoint.
+- The camera is positioned moderately to the left or right of the room's center axis, looking inward so the back wall recedes naturally.
+- DO NOT use an extreme wide-angle distortion, and DO NOT push the camera deep into a corner. Keep the perspective elegant, relaxed, and grounded.
+
+SCENE COMPOSITION FREEZE (CRITICAL):
+- The position of every piece of furniture, rug, lighting fixture, and decor object is STRICTLY LOCKED to its location in the reference image.
+- You may NOT move, remove, re-arrange, or add any objects. If there is a coffee table in the reference, it MUST remain in that exact spot.
+- The room itself is a frozen statue; your ONLY task is to move the camera around it.
 `.trim();
 }
 

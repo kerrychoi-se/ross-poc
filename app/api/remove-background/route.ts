@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const originalHeight = metadata.height || 0;
 
     // Resize if exceeds Jasper dimension limits
-    let processedBuffer = imageBuffer;
+    let processedBuffer: Buffer = imageBuffer;
     if (originalWidth > MAX_DIMENSION || originalHeight > MAX_DIMENSION) {
       processedBuffer = await sharpImage
         .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         `[remove-background] Image exceeds 30MB (${(processedBuffer.length / 1024 / 1024).toFixed(1)}MB), reducing...`
       );
 
-      let currentBuffer = processedBuffer;
+      let currentBuffer: Buffer = processedBuffer;
       let iterations = 0;
 
       while (currentBuffer.length > MAX_FILE_SIZE && iterations < MAX_RESIZE_ITERATIONS) {
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const jasperEndpoint = "https://api.jasper.ai/v1/image/remove-background";
     
     // Create a Blob from the buffer and add to FormData
-    const imageBlob = new Blob([processedBuffer], { type: "image/jpeg" });
+    const imageBlob = new Blob([new Uint8Array(processedBuffer)], { type: "image/jpeg" });
     const formData = new FormData();
     formData.append("image_file", imageBlob, "image.jpg");
 

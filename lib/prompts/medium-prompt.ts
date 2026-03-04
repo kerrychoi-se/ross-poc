@@ -1,10 +1,10 @@
 /**
- * Medium Prompt Builder (~1000 words)
+ * Medium Prompt Builder (~400 words)
  *
- * Condensed version of the long prompts for A/B test variants C and D.
- * Covers every topic from the long prompt (camera, fidelity, aesthetic,
- * scene, lighting, lived-in styling) but each section is written more
- * concisely to land around 1000 words total.
+ * Shorter variant of the long prompts for A/B test variants A and B.
+ * Covers the same topics but more aggressively condensed — fewer
+ * per-section details, leaning on the sofa/lighting bank strings
+ * to carry descriptive weight.
  *
  * Uses the same randomized scene element banks as the long prompts.
  */
@@ -31,8 +31,8 @@ function buildMediumWallArtPrompt(): {
 
   const sceneOptions: SceneOptions = {
     lightingDirection,
-    wall,
-    floor,
+    wall: wall.description,
+    floor: floor.description,
     sofa,
     freshFlowers: constants.flowers,
     goldAccent: constants.goldAccent,
@@ -41,84 +41,35 @@ function buildMediumWallArtPrompt(): {
   };
 
   const prompt = `
-CAMERA POSITION (HIGHEST PRIORITY):
-Perfectly straight-on frontal photograph of a living room wall. Camera on tripod, centered, aimed at the back wall at exactly 90 degrees. All vertical lines perfectly vertical, all horizontal lines perfectly horizontal. No perspective convergence. This is an architectural elevation photograph, not a perspective shot.
-
-TASK: Generate a lifestyle room scene around a fixed product asset (wall art). Generate ONLY the room, furniture, props, lighting, and environment. Preserve Asset_1 (wall art) with absolute pixel accuracy — do not redraw or re-render.
+CAMERA:
+Wide establishing shot — straight-on frontal photograph capturing the full wall and surrounding furniture. Tripod, centered, 90 degrees to back wall. 24mm wide-angle rectilinear lens, f/8, deep focus. All verticals vertical, all horizontals horizontal. Architectural elevation, not a perspective shot. The product must appear SMALL in frame — no more than 5-8% of total image area.
 
 PRODUCT FIDELITY (HIGHEST PRIORITY):
-The wall art (Asset_1) is a transparent PNG cutout — a fixed geometric constant, not a suggestion. Reproduce it exactly as provided with zero modification. Do not alter colors, textures, proportions, or edges. Do not apply style transfer, smoothing, enhancement, re-rendering, color correction, or added lighting effects to the product. Preserve natural grain and imperfections from the source image. The product's cutout edges are final — do not re-cut, feather, blur, or modify the edge profile. Where the image has transparent/alpha regions, the generated background must show through naturally.
-Customers will directly compare this image with the actual product they purchase — any deviation in color, texture, detail, or proportions erodes trust. This is commercial product representation; treat product fidelity as the single highest priority constraint.
-
-AESTHETIC DIRECTION:
-Style: ${AESTHETIC_DNA.aesthetic}
-Palette: ${AESTHETIC_DNA.palette.primary.join(", ")} with accents of ${AESTHETIC_DNA.palette.accents.join(", ")}. Luxury touches in ${AESTHETIC_DNA.palette.luxuryTouches.join(", ")}.
-Materials: ${AESTHETIC_DNA.materials.fabrics.join(", ")}, ${AESTHETIC_DNA.materials.woods.join(", ")}, ${AESTHETIC_DNA.materials.ceramics.join(", ")}.
-Metallics must be warm-toned: ${AESTHETIC_DNA.materials.metallics[0]}.
-The scene must feel casual and lived-in, NOT staged or overly styled.
+The wall art (Asset_1) is a transparent PNG — reproduce it exactly with zero modification. No style transfer, smoothing, or re-rendering. Generate ONLY the room around it.
 
 SCENE:
+Style: ${AESTHETIC_DNA.aesthetic}
+Palette: ${AESTHETIC_DNA.palette.primary.join(", ")} with accents of ${AESTHETIC_DNA.palette.accents.join(", ")}.
+
 Sofa: ${sofa}
 
-Environment:
-- Back Wall: ${wall}
-- Flooring: ${floor}
-- Windows with sheer white linen curtains softly filtering natural light into the room
+Environment: ${wall.description} walls, ${floor.description} flooring, sheer white linen curtains filtering natural light.
+Mandatory: ${constants.flowers} | ${constants.goldAccent} | ${constants.wovenTexture}
+Coffee table centrally in front of the sofa with lived-in objects — omitting it is a failure condition.
 
-Mandatory Elements:
-- Fresh Flowers: ${constants.flowers}
-- Gold/Brass Accent: ${constants.goldAccent}
-- Woven Texture: ${constants.wovenTexture}
-
-WALL ART PLACEMENT & SCALE:
-- Mounted on the back wall as a SMALL decorative accent — no more than 10–12% of image width. Err on the side of too small.
-- Real-world scale: approximately 40–50cm (16–20 inches) wide, no taller than 60cm (24 inches). These are small decorative pieces, not gallery-scale canvases.
-- Proportional to sofa: approximately 1/5 the sofa width — noticeably smaller than the sofa back.
-- Position bottom edge 8–12 inches (20–30cm) above eye level with generous negative space on all sides.
-- Back wall texture visible through any transparent regions.
-
-VISUAL HIERARCHY:
-- Dominant: The sofa and rug are the largest, most prominent elements.
-- Secondary: The wall art is a small accent — do not zoom in or crop tightly on it.
-- Camera: Flat frontal, centered on the wall, full room context visible.
-
-TECHNICAL OPTICS:
-- 35mm rectilinear lens, f/8.0 deep focus, eye-level orthogonal projection at 90° to wall plane.
-- Zero roll, pitch, yaw. No keystone or barrel distortion. Rectilinear projection only.
-- All verticals perfectly vertical, all horizontals perfectly horizontal. Back wall renders as a flat plane.
-- NOT a three-quarter view, NOT angled, NOT off-center. Do NOT rotate the camera on any axis.
+WALL ART PLACEMENT:
+Small accent piece on the back wall — no more than 5-8% of total image area. Approximately the size of an 8×10 inch print on a 12-foot wall. Empty wall space at least 6x the art's area. Not oversized or statement-sized. Generous breathing room above sofa. If the art appears larger than a dinner plate relative to the sofa, the image has failed.
 
 LIGHTING:
-- High-key, bright, flooded with natural light, almost overexposed (+1.5 to +2.0 EV). 5600K neutral daylight.
-- No dark, moody, or underlit areas. Sun-drenched room at 11am with all curtains open.
-- Light source: ${lightingDirection}
-- All shadows follow a single consistent direction: ultra-soft edges, very low opacity (10–20% grey max), wide penumbra. Contact shadows barely visible — a subtle darkening, not a hard line. No harsh or high-contrast shadows anywhere.
+${lightingDirection}
+Soft ambient occlusion and drop-shadows behind the art edges for 3D depth. Gold/brass elements warm-toned with dimensional highlights.
 
-METALLIC RENDERING:
-All gold and brass elements must appear warm-toned (18K yellow gold, rich warm brass) with dimensional highlights, soft specular reflections, and visible micro-texture. NEVER greenish, olive, or flat matte. Warm amber-gold, like afternoon sunlight on polished brass.
+MATERIALS: Wall: ${wall.pbrTexture}. Floor: ${floor.pbrTexture}. Bright lighting reveals micro-texture.
 
-ALPHA INTEGRITY:
-If the wall art has transparent regions, show the back wall through them. Maintain crisp edges, no artificial glow or halo effects around the wall art.
-
-PLACEMENT REALISM:
-Do NOT place picture frames leaning on the floor or propped against walls. All decorative objects in logical, intentional locations — as if the homeowner placed them with purpose.
-
-LIVED-IN STYLING:
-This is the actual home of a stylish woman in her 30s–40s who just stepped away for a moment — NOT a showroom, NOT a catalog set.
-- Sofa cushions show gentle body impressions from recent use
-- Throw blanket bunched or pulled to one side, not neatly folded
-- At least one pillow off-center, fallen to the side, or squished flat
-- Flowers a day or two old — still beautiful but a few petals dropped onto the surface below
-- A personal item visible nearby: an open book, reading glasses, a coffee mug, or a cardigan
-- Nothing perfectly centered or symmetrically arranged — asymmetry is key
-- ${constants.livedInDetail}
-Not dirty or chaotic — beautiful disorder. Think behind-the-scenes at an Anthropologie or Jenni Kayne shoot, between setups when the stylist stepped away.
+STYLING: Lived-in, not staged. Asymmetric, casual. ${constants.livedInDetail} All storage items in use — no empty vessels.
 
 OUTPUT:
-Generate a photorealistic lifestyle scene featuring the provided wall art as the immutable focal point.
-The scene must be BRIGHT and HIGH-KEY — flooded with natural light, almost overexposed.
-The scene must look GENUINELY LIVED-IN — beautiful disorder, not catalog perfection. Shabby chic yet tailored.
-Consistent with high-end editorial interior photography — bright, aspirational, with the unstaged warmth of a real home.
+Photorealistic, bright, sun-drenched editorial interior. Wall art is a TINY immutable accent — no more than 5-8% of the image — in a wide, genuinely lived-in room. If the art appears larger than a small picture frame, the camera is too close. Beautiful disorder, not catalog perfection.
 `.trim();
 
   return { prompt, sceneOptions };
@@ -137,8 +88,8 @@ function buildMediumShelfPrompt(): {
 
   const sceneOptions: SceneOptions = {
     lightingDirection,
-    wall,
-    floor,
+    wall: wall.description,
+    floor: floor.description,
     sofa,
     propSetName: propSet.name,
     freshFlowers: constants.flowers,
@@ -152,118 +103,58 @@ function buildMediumShelfPrompt(): {
     .join("\n");
 
   const prompt = `
-CAMERA POSITION (HIGHEST PRIORITY):
-Perfectly straight-on frontal photograph of a living room wall. Camera on tripod, centered, aimed at the back wall at exactly 90 degrees. All vertical lines perfectly vertical, all horizontal lines perfectly horizontal. No perspective convergence. This is an architectural elevation photograph, not a perspective shot.
-
-TASK: Generate a lifestyle room scene around a fixed product asset (shelf) with surface-aware object placement. Generate ONLY the room, furniture, decorative props, lighting, and environment. Preserve Asset_1 (shelf) with absolute pixel accuracy — do not redraw or re-render.
+CAMERA:
+Wide establishing shot — straight-on frontal photograph capturing the full wall and surrounding furniture. Tripod, centered, 90 degrees to back wall. 24mm wide-angle rectilinear lens, deep focus. All verticals vertical, all horizontals horizontal. Architectural elevation, not a perspective shot. The product must appear SMALL in frame — no more than 15-20% of total image width.
 
 PRODUCT FIDELITY (HIGHEST PRIORITY):
-The shelf (Asset_1) is a transparent PNG cutout — a fixed geometric constant, not a suggestion. Reproduce it exactly as provided with zero modification. Do not alter colors, textures, finish, material appearance, or geometry. Do not apply style transfer, smoothing, enhancement, re-rendering, color correction, or added lighting effects to the product. Preserve natural grain and imperfections from the source image. The product's cutout edges are final — do not re-cut, feather, blur, or modify the edge profile.
-Customers will directly compare this image with the actual product they purchase — any deviation in color, texture, detail, or proportions erodes trust. This is commercial product representation; treat product fidelity as the single highest priority constraint.
-
-AESTHETIC DIRECTION:
-Style: ${AESTHETIC_DNA.aesthetic}
-Palette: ${AESTHETIC_DNA.palette.primary.join(", ")} with accents of ${AESTHETIC_DNA.palette.accents.join(", ")}. Luxury touches in ${AESTHETIC_DNA.palette.luxuryTouches.join(", ")}.
-Materials: ${AESTHETIC_DNA.materials.fabrics.join(", ")}, ${AESTHETIC_DNA.materials.woods.join(", ")}, ${AESTHETIC_DNA.materials.ceramics.join(", ")}.
-Metallics must be warm-toned: ${AESTHETIC_DNA.materials.metallics[0]}.
-The scene must feel casual and lived-in, NOT staged or overly styled.
+The shelf (Asset_1) is a transparent PNG — reproduce it exactly with zero modification. No style transfer, smoothing, or re-rendering. Generate ONLY the room, furniture, and props around it.
 
 SCENE:
+Style: ${AESTHETIC_DNA.aesthetic}
+Palette: ${AESTHETIC_DNA.palette.primary.join(", ")} with accents of ${AESTHETIC_DNA.palette.accents.join(", ")}.
+
 Sofa: ${sofa}
 
-Environment:
-- Back Wall: ${wall}
-- Flooring: ${floor}
-- Windows with sheer white linen curtains softly filtering natural light into the room
-- The back wall must be visible through any open brackets, gaps, or transparent regions of the shelf
+Environment: ${wall.description} walls, ${floor.description} flooring, sheer white linen curtains filtering natural light. Back wall visible through any open shelf brackets or gaps.
+Mandatory: ${constants.flowers} | ${constants.goldAccent} | ${constants.wovenTexture}
+Coffee table centrally in front of the sofa with lived-in objects — omitting it is a failure condition.
 
-Mandatory Elements:
-- Fresh Flowers: ${constants.flowers}
-- Gold/Brass Accent: ${constants.goldAccent}
-- Woven Texture: ${constants.wovenTexture}
+SHELF PLACEMENT:
+Wall-mounted accent, 15-20% of image width, noticeably smaller than 1/4 sofa width. Bottom positioned 15-20 inches above sofa. At least 3 feet of empty wall space on each side. The shelf must never dominate the wall — it is a minor accent, not a focal point.
 
-SHELF PLACEMENT & SCALE:
-- Wall-mounted accent piece — no more than 25–30% of total image width.
-- Proportional to furniture: approximately 1/3 the width of the sofa or sideboard below it.
-- Real-world scale: approximately 60–90cm (2–3 feet) wide.
-- Position the bottom of the shelf 15–20 inches (40–50cm) above the sofa/sideboard for airy negative space.
-- At least 2 feet of empty wall space on left and right sides.
-
-VISUAL HIERARCHY:
-- Dominant: The sofa or sideboard is the largest, most prominent element.
-- Secondary: The shelf is a delicate accent — do not zoom in or crop tightly on it.
-- Camera: Flat frontal, centered on the wall, full room context visible.
-
-PROP ARRANGEMENT ON SHELF:
-Generate and place these items on the shelf surface:
+PROPS ON SHELF:
 ${propDescriptions}
-
-Prop Rules:
-- If multi-tier shelf, distribute props across ALL levels with varied arrangements per level.
-- Every prop must be visually distinct — do not repeat the same item or near-identical items.
-- Vary visual density between levels: one sparse, another more curated.
-- All props must rest naturally on shelf surfaces — respect gravity, no floating objects.
-- Arrange casually, not perfectly symmetrical. Include small touches: a book slightly angled, a candle that looks used.
-- Props cast very soft, barely visible shadows onto the shelf surface.
-
-TECHNICAL OPTICS:
-- 35mm rectilinear lens, deep focus, eye-level orthogonal projection at 90° to wall plane.
-- Zero roll, pitch, yaw. No keystone or barrel distortion.
-- All verticals perfectly vertical, all horizontals perfectly horizontal. Back wall renders as a flat plane.
-- NOT a three-quarter view, NOT angled, NOT off-center. Do NOT rotate the camera on any axis.
+Distribute across ALL levels if multi-tier. Every prop visually distinct. Arrange casually, respecting gravity.
 
 LIGHTING:
-- High-key, bright, flooded with natural light, almost overexposed (+1.5 to +2.0 EV). 5600K neutral daylight.
-- No dark, moody, or underlit areas — especially important for shelf scenes, avoid any dark or rustic atmosphere.
-- Light source: ${lightingDirection}
-- All shadows follow a single consistent direction: ultra-soft edges, very low opacity (10–20% grey max), wide penumbra. Contact shadows barely visible. No harsh or high-contrast shadows anywhere.
+${lightingDirection}
+Ambient occlusion and drop-shadows behind shelf edges for 3D depth. Gold/brass warm-toned with dimensional highlights.
 
-METALLIC RENDERING:
-All gold and brass elements (shelf hardware, prop accents) must appear warm-toned (18K yellow gold, rich warm brass) with dimensional highlights, soft specular reflections, and visible micro-texture. NEVER greenish, olive, or flat matte. Warm amber-gold, like afternoon sunlight on polished brass.
+MATERIALS: Wall: ${wall.pbrTexture}. Floor: ${floor.pbrTexture}. Bright lighting reveals micro-texture.
 
-RESTING SURFACE AWARENESS:
-Identify the top plane of the shelf (and each level if multi-tier). All generated props must make contact with the appropriate surface. Calculate proper occlusion — props behind others should be partially hidden. Props should appear to have weight and physical presence.
-
-ALPHA INTEGRITY:
-Back wall visible through all open brackets and gaps. Crisp edges where shelf meets wall, no artificial glow or halo effects.
-
-PLACEMENT REALISM:
-Do NOT place picture frames leaning on the floor or propped against walls. All decorative objects in logical, intentional locations — as if the homeowner placed them with purpose.
-
-LIVED-IN STYLING:
-This is the actual home of a stylish woman in her 30s–40s who just stepped away for a moment — NOT a showroom, NOT a catalog set.
-- Sofa cushions show gentle body impressions from recent use
-- Throw blanket bunched or pulled to one side, not neatly folded
-- At least one pillow off-center, fallen to the side, or squished flat
-- Flowers a day or two old — still beautiful but a few petals dropped onto the surface below
-- A personal item visible nearby: an open book, reading glasses, a coffee mug, or a cardigan
-- Asymmetry is key — nothing perfectly centered or symmetrically arranged
-- ${constants.livedInDetail}
-Not dirty or chaotic — beautiful disorder. Think behind-the-scenes at an Anthropologie or Jenni Kayne shoot.
+STYLING: Lived-in, not staged. Asymmetric, casual. ${constants.livedInDetail} All storage items in use — no empty vessels.
 
 OUTPUT:
-Generate a photorealistic lifestyle scene featuring the provided shelf as an immutable element.
-Style the shelf with the specified props across ALL shelf levels, creating a warm, casually elegant atmosphere.
-The scene must be BRIGHT and HIGH-KEY — flooded with natural light, almost overexposed. NOT dark, NOT rustic.
-The scene must look GENUINELY LIVED-IN — beautiful disorder, not catalog perfection. Shabby chic yet tailored.
+Photorealistic, bright, sun-drenched editorial interior. NOT dark, NOT rustic. Shelf occupies no more than 15-20% of image width — a small immutable accent styled with props across ALL levels, not a dominant feature. Beautiful disorder, not catalog perfection.
 `.trim();
 
   return { prompt, sceneOptions };
 }
 
 /**
- * Build a medium (~1000 word) prompt for the given product type.
- * Returns the prompt string and its word count.
+ * Build a medium (~400 word) prompt for the given product type.
+ * Returns the prompt string, its word count, and the scene options used.
  */
 export function buildMediumPrompt(productType: ProductType): {
   prompt: string;
   wordCount: number;
+  sceneOptions: SceneOptions;
 } {
-  const { prompt } =
+  const { prompt, sceneOptions } =
     productType === "wall-art"
       ? buildMediumWallArtPrompt()
       : buildMediumShelfPrompt();
 
   const wordCount = prompt.split(/\s+/).length;
-  return { prompt, wordCount };
+  return { prompt, wordCount, sceneOptions };
 }

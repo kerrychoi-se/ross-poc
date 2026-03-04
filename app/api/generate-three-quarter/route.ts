@@ -55,20 +55,19 @@ export async function POST(request: NextRequest) {
     // Build the 3/4 angle prompt for this product type
     const prompt = buildThreeQuarterPrompt(productType as ProductType);
 
-    // Build the content parts array: prompt text + head-on reference image only.
-    // The head-on image already encodes the full aesthetic (materials, lighting,
-    // palette) so no additional reference images are needed.
+    // Image first, then text prompt — so the model treats the text as
+    // "what to change" about the reference rather than a caption to match.
     const contentParts: Array<
       | { text: string }
       | { inline_data: { mime_type: string; data: string } }
     > = [
-      { text: prompt },
       {
         inline_data: {
           mime_type: mimeType,
           data: base64Image,
         },
       },
+      { text: prompt },
     ];
 
     // Call Gemini API with imageConfig for aspect ratio and resolution control
