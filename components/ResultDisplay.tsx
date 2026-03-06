@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RefreshCw, ArrowLeftRight, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, RefreshCw, ArrowLeftRight, ArrowLeft, ChevronDown, ChevronUp, Printer } from "lucide-react";
+import { exportForPrint } from "@/lib/api-client";
 import type { SceneOptions } from "@/lib/prompts/style-system";
 
 interface ResultDisplayProps {
@@ -18,6 +19,8 @@ interface ResultDisplayProps {
 export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onReset, onRegenerateThreeQuarter, isRegenerating, sceneOptions, onBackToVariants }: ResultDisplayProps) {
   const [showComparison, setShowComparison] = useState(false);
   const [showSceneOptions, setShowSceneOptions] = useState(false);
+  const [isExportingPrint, setIsExportingPrint] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const handleDownload = async (dataUrl: string, filename: string) => {
     try {
@@ -46,9 +49,21 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
 
   const handleDownloadAll = async () => {
     await handleDownload(imageUrl, `head-on-view-${Date.now()}.png`);
-    // Small delay between downloads to avoid browser blocking
     await new Promise((resolve) => setTimeout(resolve, 500));
     await handleDownload(threeQuarterImage, `three-quarter-view-${Date.now()}.png`);
+  };
+
+  const handleExportPrint = async () => {
+    setIsExportingPrint(true);
+    setExportError(null);
+    try {
+      await exportForPrint(imageUrl, threeQuarterImage);
+    } catch (error) {
+      console.error("Print export error:", error);
+      setExportError(error instanceof Error ? error.message : "Export failed");
+    } finally {
+      setIsExportingPrint(false);
+    }
   };
 
   return (
@@ -229,6 +244,19 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
         </button>
 
         <button
+          onClick={handleExportPrint}
+          disabled={isExportingPrint || isRegenerating}
+          className="btn-jasper-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isExportingPrint ? (
+            <RefreshCw className="w-5 h-5 animate-spin" />
+          ) : (
+            <Printer className="w-5 h-5" />
+          )}
+          {isExportingPrint ? "Preparing Print Files..." : "Export Print Ready Version"}
+        </button>
+
+        <button
           onClick={onReset}
           className="btn-jasper-secondary flex items-center gap-2"
         >
@@ -236,6 +264,10 @@ export function ResultDisplay({ imageUrl, threeQuarterImage, originalImage, onRe
           Start Over
         </button>
       </div>
+
+      {exportError && (
+        <p className="text-center text-sm text-red-600">{exportError}</p>
+      )}
     </div>
   );
 }

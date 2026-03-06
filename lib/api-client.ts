@@ -86,3 +86,35 @@ export async function generateThreeQuarterView(
   const result = await response.json();
   return result.image;
 }
+
+/**
+ * Export both generated images as print-ready CMYK TIFFs (24"x24" at 300 DPI).
+ * Downloads a ZIP containing both files.
+ */
+export async function exportForPrint(
+  headOnImage: string,
+  threeQuarterImage: string
+): Promise<void> {
+  const response = await fetch("/api/export-print", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ headOnImage, threeQuarterImage }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Failed to export print files: ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `print-ready-cmyk-24x24-${Date.now()}.zip`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

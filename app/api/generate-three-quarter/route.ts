@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate product type
     if (productType !== "wall-art" && productType !== "shelf") {
       return NextResponse.json(
         { error: "Invalid product type. Must be 'wall-art' or 'shelf'" },
@@ -27,9 +26,8 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY?.trim();
-    const model = process.env.GEMINI_MODEL || "gemini-3-pro-image-preview";
+    const model = "gemini-3.1-flash-image-preview";
     const aspectRatio = process.env.GEMINI_ASPECT_RATIO || "1:1";
-    const imageSize = process.env.GEMINI_IMAGE_SIZE || "2K";
 
     if (!apiKey) {
       return NextResponse.json(
@@ -38,125 +36,149 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extract base64 data from data URL if present
     let base64Image = image;
     let mimeType = "image/png";
 
     if (image.includes(",")) {
       const parts = image.split(",");
       base64Image = parts[1];
-      // Extract mime type from data URL
       const mimeMatch = parts[0].match(/data:([^;]+);/);
       if (mimeMatch) {
         mimeType = mimeMatch[1];
       }
     }
 
-    // Build the 3/4 angle prompt for this product type
     const prompt = buildThreeQuarterPrompt(productType as ProductType);
 
-    // Image first, then text prompt — so the model treats the text as
-    // "what to change" about the reference rather than a caption to match.
-    const contentParts: Array<
-      | { text: string }
-      | { inline_data: { mime_type: string; data: string } }
-    > = [
-      {
-        inline_data: {
-          mime_type: mimeType,
-          data: base64Image,
-        },
-      },
-      { text: prompt },
-    ];
-
-    // Call Gemini API with imageConfig for aspect ratio and resolution control
+    // Multi-turn structure to decouple scene memorisation from angle change.
+    // Turn 1: "Study this room" + image → model encodes scene content
+    // Turn 2: model confirms AND pre-visualizes the 3/4 geometry
+    // Turn 3: generation instruction with geometric constraints
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const payload = {
+      systemInstruction: {
+        parts: [{ text: "You are a virtual camera operator who re-renders interior scenes from new viewpoints. When given a room photograph and a new camera angle, you produce a new photograph of the SAME room from the requested position. Every piece of furniture, every decoration, every material stays exactly where it is — only the camera moves. You always produce a clear perspective change with vanishing-point convergence." }],
+      },
       contents: [
         {
-          parts: contentParts,
+          role: "user",
+          parts: [
+            { text: "Study this room photograph carefully. Memorize every detail: the exact furniture and where it sits, the wall color and texture, floor material, lighting direction and warmth, and every decorative element. You will need to photograph this exact room from a different camera position." },
+            {
+              inline_data: {
+                mime_type: mimeType,
+                data: base64Image,
+              },
+            },
+          ],
+        },
+        {
+          role: "model",
+          parts: [
+            { text: "I've carefully memorized every detail of this room — furniture types and exact placement, wall material, floor type, lighting direction, and all decorative objects. I can see this is currently shot from a flat, head-on frontal angle.\n\nWhen I move the camera 45 degrees to one side, I expect to see: the back wall receding at an angle with converging horizontal lines, one side wall becoming visible, the sofa revealing its arm and side profile, and any wall-mounted items appearing foreshortened as trapezoids rather than flat rectangles. I'm ready to generate this 3/4 perspective view." },
+          ],
+        },
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+          ],
         },
       ],
       generationConfig: {
         responseModalities: ["TEXT", "IMAGE"],
+        thinkingConfig: {
+          thinkingLevel: "high",
+          includeThoughts: false,
+        },
         imageConfig: {
           aspectRatio,
-          imageSize,
+          imageSize: "4K",
         },
       },
     };
 
     console.log(
-      `[generate-three-quarter] Processing ${productType}, aspect ratio: ${aspectRatio}, image size: ${imageSize}`
+      `[generate-three-quarter] Processing ${productType}, model: ${model}, aspect ratio: ${aspectRatio}, image size: 4K`
     );
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const MAX_ATTEMPTS = 3;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", errorText);
-      return NextResponse.json(
-        { error: `Gemini API error: ${response.status}` },
-        { status: response.status }
-      );
-    }
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const result = await response.json();
-
-    // Extract the generated image from the response
-    const candidates = result.candidates;
-    if (!candidates || candidates.length === 0) {
-      return NextResponse.json(
-        { error: "No response from Gemini API" },
-        { status: 500 }
-      );
-    }
-
-    const parts = candidates[0].content?.parts;
-    if (!parts || parts.length === 0) {
-      return NextResponse.json(
-        { error: "No content in Gemini response" },
-        { status: 500 }
-      );
-    }
-
-    // Find the final (non-thought) image part in the response.
-    // Thinking mode produces interim images marked with "thought": true.
-    // We want the last image part that is NOT a thought.
-    const imageParts = parts.filter(
-      (part: { inlineData?: { mimeType: string; data: string }; thought?: boolean }) =>
-        part.inlineData?.mimeType?.startsWith("image/") && !part.thought
-    );
-
-    const imagePart = imageParts.length > 0 ? imageParts[imageParts.length - 1] : null;
-
-    if (!imagePart?.inlineData) {
-      // Check if there's a text response explaining why no image was generated
-      const textPart = parts.find(
-        (part: { text?: string }) => typeof part.text === "string"
-      );
-      if (textPart?.text) {
-        console.error("Gemini text response (no image):", textPart.text);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Gemini API error (attempt ${attempt}):`, errorText);
+        if (attempt === MAX_ATTEMPTS) {
+          return NextResponse.json(
+            { error: `Gemini API error: ${response.status}` },
+            { status: response.status }
+          );
+        }
+        continue;
       }
-      return NextResponse.json(
-        { error: "No image generated by Gemini" },
-        { status: 500 }
+
+      const result = await response.json();
+
+      const candidates = result.candidates;
+      if (!candidates || candidates.length === 0) {
+        if (attempt === MAX_ATTEMPTS) {
+          return NextResponse.json(
+            { error: "No response from Gemini API" },
+            { status: 500 }
+          );
+        }
+        continue;
+      }
+
+      const parts = candidates[0].content?.parts;
+      if (!parts || parts.length === 0) {
+        if (attempt === MAX_ATTEMPTS) {
+          return NextResponse.json(
+            { error: "No content in Gemini response" },
+            { status: 500 }
+          );
+        }
+        continue;
+      }
+
+      const imageParts = parts.filter(
+        (part: { inlineData?: { mimeType: string; data: string }; thought?: boolean }) =>
+          part.inlineData?.mimeType?.startsWith("image/") && !part.thought
       );
+
+      const imagePart = imageParts.length > 0 ? imageParts[imageParts.length - 1] : null;
+
+      if (!imagePart?.inlineData) {
+        const textPart = parts.find(
+          (part: { text?: string }) => typeof part.text === "string"
+        );
+        console.error(`Gemini refused/no image (attempt ${attempt}):`, textPart?.text);
+        if (attempt === MAX_ATTEMPTS) {
+          return NextResponse.json(
+            { error: "No image generated by Gemini" },
+            { status: 500 }
+          );
+        }
+        continue;
+      }
+
+      const generatedImage = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+      return NextResponse.json({ image: generatedImage });
     }
 
-    const generatedImage = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
-
-    return NextResponse.json({
-      image: generatedImage,
-    });
+    return NextResponse.json(
+      { error: "Failed to generate 3/4 angle view after multiple attempts" },
+      { status: 500 }
+    );
   } catch (error) {
     console.error("Generate three-quarter view error:", error);
     return NextResponse.json(
